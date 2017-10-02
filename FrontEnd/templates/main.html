@@ -1,0 +1,18 @@
+<!-- add a controller directive to control the functionality in this div -->
+ <div ng-controller="AppCtrl">
+     <ul>
+         <div class="media" ng-repeat="doctor in doctors" ng-show="doctor.show">
+             <div class="media-left media-top" >
+                 <div>
+                     <img ng-src="{{doctor.image}}" class="media-object" style="width:80px">
+                 </div>
+                 <div class="media-body">
+                     <h4 class="media-heading" ng-click="resrvation()">DR-name:{{doctor.name}}</h4>
+                     <p>Phon Number: {{doctor.phonnumber}}</p>
+                     <p>specialization: {{doctor.specialization}}</p>
+                     <p ng-repeat="data in doctor.availableAppointments " ng-show="doctor.show"><input type="submit" ng-click="reserveApp()">AvailableAppointments : {{data.time}},{{data.date}}</p>
+                 </div>
+             </div>
+         </div>
+     </ul>
+ </div>

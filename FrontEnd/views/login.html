@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>We Care -login</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style type="text/css">
+    
+    .container{
+      margin: 55px auto;
+      width: 35%;
+    }
+    button{
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<div ng-controller="loginCtrl">
+  <div class="container">
+    <div class="well">
+      <div class="page-header text-center">
+        <h1><small>Please Login</small></h1>
+      </div>
+      <form action="/" method="POST" role="form" class="form-login">
+      
+          <input type="text" ng-model="username"class="form-control" id="username" placeholder="User Name"><br>
+                   
+          
+            <input type="password" ng-model="password" id="password" class="form-control" placeholder="Password" required="required"> <br>
+        
+
+
+            
+        <button type="submit" class="btn btn-info btn-block" ng-click="submit()">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
