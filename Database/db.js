@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/medical');
 
-
+// check merge----Osama
 
 
 var medicalSchema = mongoose.Schema({
