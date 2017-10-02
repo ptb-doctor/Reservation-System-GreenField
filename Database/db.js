@@ -19,6 +19,20 @@ var adminsSchema= new Schema({
  	password: {
  		type: String,
  		required: true
+ 	},
+ 	phonnumber:{
+ 		type:Number,
+ 		required:true
+ 	},
+ 	specilization:{
+ 		type:String,
+ 		require:true
+ 	},
+ 	availableappointments:{
+ 		type:Array
+ 	},
+ 	reservedappointments:{
+ 		type:Array
  	}
 });
 
