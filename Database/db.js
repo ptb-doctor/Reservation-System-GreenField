@@ -1,14 +1,58 @@
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/medical');
+var mongoose=require('mongoose');
 
-// check merge----Osama
+var Schema=mongoose.Schema;
 
+//database name is "admins".
 
-var medicalSchema = mongoose.Schema({
-  username: String,
-  password: Number,
+mongoose.connect('mongodb://localhost/admins',function(err,data){
+	if(err){
+		console.log(err)
+	}
+	console.log('connect with db');
 });
 
-var Medical = mongoose.model('Medical', medicalSchema);
+//for suring connecting
 
-module.exports = Medical;
+// mongoose.connection.once('open',function(){
+// 	console.log('connected to database');
+// }).on('error',function(error){
+// 	console.log('Connection error:',error);
+// });
+
+//Doctor Schema for sign up and register his phon,job,
+//available,reserved Appointments.
+
+var adminsSchema= new Schema({
+	username: {
+		type: String,
+		required: true
+	},
+ 	password: {
+ 		type: String,
+ 		required: true
+ 	},
+ 	phonnumer: {
+ 		type: Number,
+ 		required: true
+ 	},
+ 	job:{
+ 		type: String,
+ 		required: true
+ 	},
+ 	availableAppointments: {
+ 		type: Array,
+ 		required: true
+ 	},
+ 	reservedAppointments: Array
+});
+
+// reservedAppointments form from body by post:
+// {
+// 	time: ,
+// 	patientName: ,
+// 	patientPhone: 
+// }
+
+var admins = mongoose.model ('admins', adminsSchema);
+
+module.exports = admins;
