@@ -4,6 +4,7 @@ angular.module('app', [])
   template: `
     <navbar />
     <main />
+    <admin/>
     
   `
 })
