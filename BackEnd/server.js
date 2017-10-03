@@ -27,7 +27,7 @@ app.use(express.static(__dirname + '/../FrontEnd'));
 app.get ('/index', (req, res) => {
 	res.redirect ('/index.html')
 })
-app.get('/',function (req,res) {
+app.get('/allall',function (req,res) {
 	db.find({}, (err, data) => {
 		res.send (data)
 	})  
@@ -145,7 +145,7 @@ app.post('/signup',function (req , res) {
 
 app.get('/signup' , function (req , res) {
 	/* body... */
-	res.render('/views/login.html');
+	res.redirect('/views/signup.html');
 });
 
 app.put('/addappointments',function (req , res) {
@@ -168,29 +168,43 @@ app.put('/addappointments',function (req , res) {
 
 app.put("/reservedappointments" , function (req , res) {
 	/* body... patientName{ $pull: { votes: { $gte: 6 } }*/
-	// console.log(req.body.availableappointments)
-	db.update(
-   { username: req.body.username },
+	console.log(req.body.availableappointments)
+db.update(
+    { username: req.body.username },
     {$pull: { availableappointments: req.body.availableappointments}},function (err , updateUser) {
+      /* body... */
+      if(err){
+        console.log('error')
+      }
+      else{
+        console.log(updateUser)
+      }
+   } 
+)
+// {$push: {reservedappointments: req.body}},function (err , updateUser) {
+   //  	/* body... */
+   //  	if(err){
+   //  		console.log('error')
+   //  	}
+   //  	else{
+   //  		res.send(updateUser)
+   //  	}
+   // } 
+   db.update(
+   { username: req.body.username },
+    {$push: { reservedappointments: req.body}},function (err , updateUser) {
     	/* body... */
+      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh---------hhhhh')
     	if(err){
     		console.log('error')
     	}
     	else{
-    		res.send(updateUser)
+    		console.log(updateUser)
     	}
    }
-   {$push: {reservedappointments: req.body}},function (err , updateUser) {
-    	/* body... */
-    	if(err){
-    		console.log('error')
-    	}
-    	else{
-    		res.send(updateUser)
-    	}
-   } 
-
+   
 )
+   res.send("updateUser")
 
 })
 
