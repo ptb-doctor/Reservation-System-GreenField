@@ -82,6 +82,7 @@ app.get('/user' , function (req , res) {
 app.delete('/deletTime' , function (req , res) {
 	/* body... */
 	// delete this time from avialable appoinment
+	
 })
 
 
@@ -126,6 +127,9 @@ app.post('/signup',function (req , res) {
 	var adduser = {
 		username:req.body.username ,
 		password:req.body.password,
+		phonnumer : req.body.phonnumer,
+		job : req.body.job,
+		availableAppointments : req.body.availableAppointments
 	};
 	var user = new db(adduser);
 	user.save()
@@ -141,7 +145,27 @@ app.post('/signup',function (req , res) {
 app.get('/signup' , function (req , res) {
 	/* body... */
 	res.render('signup');
+});
+
+app.post('/addappointments',function (req , res) {
+	/* body... */
+	db.findOne({ username: username},function (err , user){
+		if(err){
+    		console.log(err)
+    		return response.status(404).send();
+    	}
+    	if(!user){
+    		return response.status(404).send();
+    	}
+    	if(user){ 
+    		db.update(
+   { username: req.body.username },
+   { $push: { availableAppointments: request.body.availableAppointments } }
+)
+    	}
+	})
 })
+
  app.listen(8000, () => {
  	console.log ('lesl;jse;lfse')
  });

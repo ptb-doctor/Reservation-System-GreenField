@@ -24,24 +24,21 @@ mongoose.connect('mongodb://localhost/admins',function(err,data){
 
 var adminsSchema= new Schema({
 	username: {
-		type: String,
-		required: true
+		type: String
 	},
  	password: {
- 		type: String,
- 		required: true
+ 		type: String
  	},
  	phonnumer: {
- 		type: Number,
- 		required: true
+ 		type: Number
+ 		
  	},
  	job:{
- 		type: String,
- 		required: true
+ 		type: String
  	},
  	availableAppointments: {
- 		type: Array,
- 		required: true
+ 		type: Array
+ 		
  	},
  	reservedAppointments: Array
 });
