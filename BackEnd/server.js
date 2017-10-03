@@ -145,14 +145,13 @@ app.post('/signup',function (req , res) {
 
 app.get('/signup' , function (req , res) {
 	/* body... */
-	res.render('signup');
+	res.render('/views/login.html');
 });
 
 app.put('/addappointments',function (req , res) {
-	/* body... */
 	  		console.log('-------- yes', req.body.availableappointments)
     		db.update(
-   { username: req.body.username },
+    { username: req.body.username },
     {$push: { availableappointments: req.body.availableappointments}},function (err , updateUser) {
     	/* body... */
     	if(err){
@@ -164,6 +163,8 @@ app.put('/addappointments',function (req , res) {
    } 
 )
 });
+
+
 
 app.put("/reservedappointments" , function (req , res) {
 	/* body... patientName{ $pull: { votes: { $gte: 6 } }*/
