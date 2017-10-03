@@ -10,8 +10,10 @@ var db = require('../database/db');
 var util = require('./utility');
 var jwt = require('jwt-simple');
 app.use(morgan('dev'));
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
 app.use(cookieParser());
 
 
@@ -100,7 +102,7 @@ app.get('/logout', function (req, res) {
 var bcrypt = require('bcrypt');
 // 
  app.post('/login', function(req, res) {
-     console.log('------------>login', req.body.username)
+     console.log('------------>login', req.body)
     var username = req.body.username;
     var password = req.body.password;
     // var salt = bcrypt.genSaltSync(10);
