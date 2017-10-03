@@ -27,17 +27,16 @@ app.use(express.static(__dirname + '/../FrontEnd'));
 app.get ('/index', (req, res) => {
 	res.redirect ('/index.html')
 })
-app.get('/allall',function (req,res) {
+app.get('/',function (req,res) {
 	db.find({}, (err, data) => {
 		res.send (data)
 	})  
 })
-app.post('/addAppointments', function (req, res) {
+app.post('/reservedappointments', function (req, res) {
 
 	var patient = {
 		patientName:req.body.patientName ,
 		phoneNumber:req.body.phoneNumber,
-		avialableAppointments : req.body.avialableAppointments
 	};
 	var newpatient = new db(patient);
 	newpatient.save()
@@ -87,6 +86,7 @@ app.get('/user' , function (req , res) {
 app.delete('/deletTime' , function (req , res) {
 	/* body... */
 	// delete this time from avialable appoinment
+	
 })
 
 
@@ -117,10 +117,6 @@ var bcrypt = require('bcrypt');
             return res.status(404).send();
         }
         if(user){
-          //   var token = jwt.encode(user , "secret")
-          //   console.log('**********', user.password);
-          // res.json({token : token})
-          // console.log("-----------------" ,token )
           res.redirect ('/index.html');
         }
     })
@@ -132,6 +128,9 @@ app.post('/signup',function (req , res) {
 	var adduser = {
 		username:req.body.username ,
 		password:req.body.password,
+		phonnumber : req.body.phonnumber,
+		specilization : req.body.specilization
+
 	};
 	var user = new db(adduser);
 	user.save()
@@ -146,8 +145,57 @@ app.post('/signup',function (req , res) {
 
 app.get('/signup' , function (req , res) {
 	/* body... */
-	res.render('signup');
+	res.render('/views/login.html');
+});
+
+app.put('/addappointments',function (req , res) {
+	  		console.log('-------- yes', req.body.availableappointments)
+    		db.update(
+    { username: req.body.username },
+    {$push: { availableappointments: req.body.availableappointments}},function (err , updateUser) {
+    	/* body... */
+    	if(err){
+    		console.log('error')
+    	}
+    	else{
+    		res.send(updateUser)
+    	}
+   } 
+)
+});
+
+
+
+app.put("/reservedappointments" , function (req , res) {
+	/* body... patientName{ $pull: { votes: { $gte: 6 } }*/
+	// console.log(req.body.availableappointments)
+	db.update(
+   { username: req.body.username },
+    {$pull: { availableappointments: req.body.availableappointments}},function (err , updateUser) {
+    	/* body... */
+    	if(err){
+    		console.log('error')
+    	}
+    	else{
+    		res.send(updateUser)
+    	}
+   }
+   {$push: {reservedappointments: req.body}},function (err , updateUser) {
+    	/* body... */
+    	if(err){
+    		console.log('error')
+    	}
+    	else{
+    		res.send(updateUser)
+    	}
+   } 
+
+)
+
 })
+
+
+
  app.listen(2000, () => {
  	console.log ('Server listening on port ', 2000)
  });

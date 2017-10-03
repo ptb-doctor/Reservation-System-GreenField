@@ -29,7 +29,7 @@ var adminsSchema= new Schema({
  		require:true
  	},
  	availableappointments:{
- 		type:Array
+ 		type: Array
  	},
  	reservedappointments:{
  		type:Array
