@@ -7,7 +7,7 @@ var session = require('express-session')
 var cookieParser = require('cookie-parser')
 // var path = require('path');
 var db = require('../database/db');
-var util = require('/utility');
+var util = require('./utility');
 var jwt = require('jwt-simple');
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -21,12 +21,15 @@ app.use(session({secret : "asynco",
   saveUninitialized: true}));
 app.use(express.static(__dirname + '/../FrontEnd'));
 
+
+app.get ('/index', (req, res) => {
+	res.redirect ('/index.html')
+})
 app.get('/allall',function (req,res) {
 	db.find({}, (err, data) => {
 		res.send (data)
 	})  
 })
-
 app.post('/addAppointments', function (req, res) {
 
 	var patient = {
@@ -47,11 +50,12 @@ app.post('/addAppointments', function (req, res) {
 });
 app.post('/AddUser' , function (req , res) {
 	/* body... */
+	console.log('AddUser 5aoa defined')
 	var userAdd = {
-		username:req.body.username ,
-		password:req.body.password,
+		username:req.body.username,
+		password:req.body.password
 	};
-	var user = new db(AddUser);
+	var user = new db(userAdd);
 	user.save()
 	.then(item=>{
 		res.send("item saved to database")
@@ -63,7 +67,7 @@ app.post('/AddUser' , function (req , res) {
 
 app.get('/login',function (req , res) {
 	/* body... */
-	res.render('login')
+	res.redirect('/views/login.html')
 })
 
 app.get('/getAppointment', function (req, res) {
@@ -76,8 +80,7 @@ app.get('/getAppointment', function (req, res) {
 app.get('/user' , function (req , res) {
 	/* body... */
 	//give the home page of administrator 
-
-} )
+})
 
 app.delete('/deletTime' , function (req , res) {
 	/* body... */
@@ -98,28 +101,29 @@ app.get('/logout', function (req, res) {
 var bcrypt = require('bcrypt');
 // 
  app.post('/login', function(req, res) {
-  var username = req.body.username;
-  var password = req.body.password;
+     console.log('------------>login', req.body.username)
+    var username = req.body.username;
+    var password = req.body.password;
+    // var salt = bcrypt.genSaltSync(10);
+    // var hash = bcrypt.hashSync(password, salt);
+    db.findOne({ username: username , password : password},function (err , user) {
+         
+        if(err){
+            console.log(err)
+            return res.status(404).send();
+        }
+        if(!user){
+            return res.status(404).send();
+        }
+        if(user){
+          //   var token = jwt.encode(user , "secret")
+          //   console.log('**********', user.password);
+          // res.json({token : token})
+          // console.log("-----------------" ,token )
+          res.redirect ('/index.html');
+        }
+    })
 
-   db.findOne({ username: username , password : password},function (err , user) {
-//     	 body... 
-    	if(err){
-    		console.log(err)
-    		return response.status(404).send();
-    	}
-    	if(!user){
-    		return response.status(404).send();
-    	}
-    	if(user){ 
-        user.comparePassword(password, function(match) {
-          if (match) {
-            util.createSession(req, res, user);
-          } else {
-            res.redirect('/login');
-          }
-        });
-      }
-    });
 });
 
 app.post('/signup',function (req , res) {
@@ -165,7 +169,12 @@ app.post('/addappointments',function (req , res) {
     	}
 	})
 })
+<<<<<<< HEAD
 
  app.listen(8000, () => {
  	console.log ('lesl;jse;lfse')
+=======
+ app.listen(2000, () => {
+ 	console.log ('Server listening on port ', 2000)
+>>>>>>> origin
  });
