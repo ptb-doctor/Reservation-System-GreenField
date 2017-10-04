@@ -1,14 +1,14 @@
 <!-- add a controller directive to control the functionality in this div -->
 <div id="mainpage" ng-controller="AppCtrl">
         <ul>
-            <div ng-show="doctor.showAll" class="media" ng-repeat="doctor in doctors">
+            <div ng-show=true class="media" ng-repeat="doctor in doctors">
                 <div class="media-left media-top" >
                     <div class="media-left">
                         <img ng-src="{{doctor.image}}" class="media-object" style="width:80px"  ng-click="showDoctorAppointments(doctor.name)">
                         <div class="media-body">
-                          <h1 class="media-heading">DR-name:{{doctor.name}}</h1>
-                          <p>Phon Number: {{doctor.phonnumber}}</p>
-                          <p>Specialization: {{doctor.specialization}}</p>
+                          <h1 class="media-heading">DR-name:{{doctor.username}}</h1>
+                          <p>Phon Number: {{doctor.phoneNumber}}</p>
+                          <p>Specialization: {{doctor.specilization}}</p>
                         <div ng-show="doctor.showAppointments" class="row">
                         <div class="col-lg-4">
                         <label>Appointments</label>
@@ -20,7 +20,7 @@
                         <div class="form-group">
                           <label for="usr">Name:</label>
                           <input id="pName" type="text" ng-model="nameVal" class="form-control">
-                        </div>             
+                        </div>
                         <div class="form-group">
                           <label for="pwd">Phone:</label>
                           <input id="pPhon" type="text" class="form-control" ng-model="phoneVal">
