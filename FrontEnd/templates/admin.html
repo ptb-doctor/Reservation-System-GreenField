@@ -2,12 +2,10 @@
 	<p>Date {{$scope.date}}</p>
 	 <input type="date" name="date" id="addeddateappointment">
 	 <input type="time" name="time" id="addedtimeappointment">
-	<input type="submit" ng-click="addapointment()">	
+	<button type="submit" ng-click="addApointment()">Submit</button>
 	<ul>
-		<li ng-repeat="appointment in appointments">[appointment date: {{appointment.date}} , appointment time: {{appointment.time}}]</li>
-		
+		<li ng-repeat="appointment in appointments">[appointment date: {{appointmentDate}} , appointment time: {{appointmentTime}}]</li>
 	</ul>
 
 	<button id="loadreserved" class="btn btn-success" ng-click="loadAppointments()">Load reserved appointments</button>
 </div>
-
