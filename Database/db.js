@@ -20,7 +20,7 @@ var adminsSchema= new Schema({
  		type: String,
  		required: true
  	},
- 	phonnumber:{
+ 	phoneNumber:{
  		type:Number,
  		required:true
  	},
@@ -28,10 +28,10 @@ var adminsSchema= new Schema({
  		type:String,
  		require:true
  	},
- 	availableappointments:{
+ 	availableAppointments:{
  		type: Array
  	},
- 	reservedappointments:{
+ 	reservedAppointments:{
  		type:Array
  	}
 });

@@ -30,7 +30,7 @@ app.get ('/index', (req, res) => {
 app.get('/allall',function (req,res) {
 	db.find({}, (err, data) => {
 		res.send (data)
-	})  
+	})
 })
 app.post('/reservedappointments', function (req, res) {
 
@@ -47,24 +47,28 @@ app.post('/reservedappointments', function (req, res) {
 		res.status(400).send("unable to save to database")
 	})
 
-	
+
 });
-app.post('/AddUser' , function (req , res) {
-	/* body... */
-	console.log('AddUser 5aoa defined')
-	var userAdd = {
-		username:req.body.username,
-		password:req.body.password
-	};
-	var user = new db(userAdd);
-	user.save()
-	.then(item=>{
-		res.send("item saved to database")
-	})
-	.catch(err => {
-		res.status(400).send("unable to save to database")
-	})
-})
+
+// *********************** THIS is the same as signup
+// app.post('/AddUser' , function (req , res) {
+// 	/* body... */
+// 	console.log('AddUser 5aoa defined')
+// 	var userAdd = {
+// 		username:req.body.username,
+// 		password:req.body.password,
+//     phoneNumber: req.body.phoneNumber,
+//     specialization: req.body.specialization
+// 	};
+// 	var user = new db(userAdd);
+// 	user.save()
+// 	.then(item=>{
+// 		res.send("item saved to database")
+// 	})
+// 	.catch(err => {
+// 		res.status(400).send("unable to save to database")
+// 	})
+// })
 
 app.get('/login',function (req , res) {
 	/* body... */
@@ -73,26 +77,23 @@ app.get('/login',function (req , res) {
 
 app.get('/getAppointment', function (req, res) {
   res.send('GET request to the homepage')
-  // get all appointment 
-  // put the data of appointment in table 
+  // get all appointment
+  // put the data of appointment in table
   // table have patient name telephone number and the time of Appoin.
 
 })
-app.get('/user' , function (req , res) {
-	/* body... */
-	//give the home page of administrator 
-})
 
-app.delete('/deletTime' , function (req , res) {
-	/* body... */
-	// delete this time from avialable appoinment
-	
-})
-
-
+// TEST
+app.get('/getDoctors', (req, res) => {
+  db.find({}, (err, data) => {
+    if (err) console.log(err);
+    console.log('------------> all users', data);
+    res.send (data);
+  });
+});
+// End TEST
 
 
- 
 // // Logout endpoint
 app.get('/logout', function (req, res) {
    req.session.destroy(function() {
@@ -100,7 +101,7 @@ app.get('/logout', function (req, res) {
   });
 });
 var bcrypt = require('bcrypt');
-// 
+//
  app.post('/login', function(req, res) {
      console.log('------------>login', req.body)
     var username = req.body.username;
@@ -108,7 +109,7 @@ var bcrypt = require('bcrypt');
     // var salt = bcrypt.genSaltSync(10);
     // var hash = bcrypt.hashSync(password, salt);
     db.findOne({ username: username , password : password},function (err , user) {
-         
+
         if(err){
             console.log(err)
             return res.status(404).send();
@@ -128,7 +129,7 @@ app.post('/signup',function (req , res) {
 	var adduser = {
 		username:req.body.username ,
 		password:req.body.password,
-		phonnumber : req.body.phonnumber,
+		phoneNumber : req.body.phoneNumber,
 		specilization : req.body.specilization
 
 	};
@@ -148,11 +149,13 @@ app.get('/signup' , function (req , res) {
 	res.redirect('/views/signup.html');
 });
 
-app.put('/addappointments',function (req , res) {
-	  		console.log('-------- yes', req.body.availableappointments)
+
+// Manage database
+app.put('/addAppointments',function (req , res) {
+	  		console.log('-------- addappointments', req.body)
     		db.update(
     { username: req.body.username },
-    {$push: { availableappointments: req.body.availableappointments}},function (err , updateUser) {
+    {$push: { availableAppointments: req.body.newAppointment}},function (err , updateUser) {
     	/* body... */
     	if(err){
     		console.log('error')
@@ -160,49 +163,34 @@ app.put('/addappointments',function (req , res) {
     	else{
     		res.send(updateUser)
     	}
-   } 
+   }
 )
 });
 
-
-
 app.put("/reservedappointments" , function (req , res) {
-	/* body... patientName{ $pull: { votes: { $gte: 6 } }*/
-	console.log(req.body.availableappointments)
-db.update(
-    { username: req.body.username },
-    {$pull: { availableappointments: req.body.availableappointments}},function (err , updateUser) {
-      /* body... */
-      if(err){
-        console.log('error')
-      }
-      else{
-        console.log(updateUser)
-      }
-   } 
-)
-// {$push: {reservedappointments: req.body}},function (err , updateUser) {
-   //  	/* body... */
-   //  	if(err){
-   //  		console.log('error')
-   //  	}
-   //  	else{
-   //  		res.send(updateUser)
-   //  	}
-   // } 
-   db.update(
+	console.log('req.body ------->', req.body)
+  db.update(
+      { username: req.body.username },
+      {$pull: { availableAppointments: req.body.availableAppointments}},function (err , updateUser) {
+        if(err){
+          console.log(err)
+        }else{
+          console.log ('pull successfully')
+          console.log(updateUser)
+        }
+     }
+  );
+ db.update(
    { username: req.body.username },
-    {$push: { reservedappointments: req.body}},function (err , updateUser) {
-    	/* body... */
-      console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh---------hhhhh')
+    {$push: { reservedAppointments: req.body}},function (err , updateUser) {
     	if(err){
-    		console.log('error')
+    		console.log(err)
     	}
     	else{
+        console.log('push to reservedAppointments')
     		console.log(updateUser)
     	}
    }
-   
 )
    res.send("updateUser")
 
@@ -210,6 +198,6 @@ db.update(
 
 
 
- app.listen(2000, () => {
- 	console.log ('Server listening on port ', 2000)
+ app.listen(2003, () => {
+ 	console.log ('Server listening on port ', 2003)
  });
