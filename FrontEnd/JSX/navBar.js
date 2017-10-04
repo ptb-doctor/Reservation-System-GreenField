@@ -16,7 +16,7 @@ angular.module('app')
           </ul>
         </div>
       </nav>
-      <main ng-show=false></main>
-      <admin ng-show=true></admin>
+      <main ng-show=true></main>
+      <admin ng-show=false></admin>
             `
 })
