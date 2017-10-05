@@ -1,4 +1,5 @@
 var express = require('express');
+var bcrypt = require('bcrypt');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
@@ -16,16 +17,34 @@ app.use(bodyParser.json());
 
 app.use(cookieParser());
 
+// var loggedIn = false;
 
-
-app.use(session({secret : "asynco",
+app.use(session({
+  secret : "asynco",
   resave: false,
-  saveUninitialized: true}));
+  saveUninitialized: true
+}));
 app.use(express.static(__dirname + '/../FrontEnd'));
+
+var user = '';
+function createSession (req, res, newUser){
+  return req.session.regenerate(()=>{
+    user = newUser;
+    req.session.user = newUser;
+    res.redirect('/index');
+  });
+}
 
 
 app.get ('/index', (req, res) => {
-	res.redirect ('/index.html')
+console.log('+++++++++++', req.session.user);
+  if (req.session.user){
+    console.log('*-*-*-*-*-*-*NANANANANANANAN');
+    res.redirect ('/index.html')
+  }else{
+    console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
+    res.redirect ('/login')
+  }
 })
 app.get('/allall',function (req,res) {
 	db.find({}, (err, data) => {
@@ -96,31 +115,51 @@ app.get('/getDoctors', (req, res) => {
 
 // // Logout endpoint
 app.get('/logout', function (req, res) {
-   req.session.destroy(function() {
-    res.redirect('/login');
-  });
+   req.session.user = null;
+  res.redirect('/login');
 });
-var bcrypt = require('bcrypt');
 //
- app.post('/login', function(req, res) {
-     console.log('------------>login', req.body)
-    var username = req.body.username;
-    var password = req.body.password;
-    // var salt = bcrypt.genSaltSync(10);
-    // var hash = bcrypt.hashSync(password, salt);
-    db.findOne({ username: username , password : password},function (err , user) {
-
-        if(err){
-            console.log(err)
-            return res.status(404).send();
-        }
-        if(!user){
-            return res.status(404).send();
-        }
-        if(user){
-          res.redirect ('/index.html');
-        }
-    })
+//  app.post('/login', function(req, res) {
+//      console.log('------------>login', req.body)
+//     var username = req.body.username;
+//     var password = req.body.password;
+//     // var salt = bcrypt.genSaltSync(10);
+//     // var hash = bcrypt.hashSync(password, salt);
+//     db.findOne({ username: username , password : password},function (err , user) {
+//
+//         if(err){
+//             console.log(err)
+//             return res.status(404).send();
+//         }
+//         if(!user){
+//             return res.status(404).send();
+//         }
+//         if(user){
+//           res.redirect ('/index.html');
+//         }
+//     })
+//
+// });
+app.post('/login', function(req, res) {
+    console.log('--------$$$$---->login', req.session)
+   var username = req.body.username;
+   var password = req.body.password;
+   // var salt = bcrypt.genSaltSync(10);
+   // var hash = bcrypt.hashSync(password, salt);
+   db.findOne({username: username},function (err , user) {
+       if(err){
+           console.log(err)
+           return res.status(404).send();
+       }
+       if(!user){
+           return res.status(404).send();
+       }
+       if(user){
+             // Create session
+         req.session.user = user;
+         res.redirect('/index')
+       }
+   })
 
 });
 
@@ -198,6 +237,6 @@ app.put("/reservedappointments" , function (req , res) {
 
 
 
- app.listen(2003, () => {
- 	console.log ('Server listening on port ', 2003)
+ app.listen(2017, () => {
+ 	console.log ('Server listening on port ', 2017)
  });
