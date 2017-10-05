@@ -2,11 +2,13 @@
 angular.module('app')
 .controller('AppCtrl', function($scope){
     $scope.doctors;
+    $scope.currentDoctor;
+    $scope.timeA;
+
     $scope.loadPage=function (){
       $.ajax({
         url:'/getDoctors',
         method:'GET',
-        contentType:'applecation/json',
         async: false,
         success:function(data){
           $scope.doctors = data;
@@ -15,24 +17,40 @@ angular.module('app')
       })
     };
 
+    // Get doctor data
+    $scope.getDoctorData = function(name) {
+      // console.log('55555555555555555', name);
+      $.ajax({
+        url:'/getDoctorData',
+        method:'POST',
+        async: false,
+        dataType: 'json',
+        data: {
+          doctorName: name
+        },
+        success: function (data){
+          $scope.currentDoctor = data;
+          console.log('--------------->', $scope.currentDoctor);
+        }
+      });
+      console.log('ssssssssssssssssssssssss');
+    }
+
     $scope.reserveAppointment =function (time){
 
       var petientName= $("#pName").val();
       var petientPhone= $("#pPhon").val();
-      var availableAppointments= $('#time').val();
-      var username= $('#doctorName').text()
       $.ajax({
         url:'/reservedappointments',
         method:'PUT',
-        contentType:'applecation/json',
+        dataType:'json',
         data:{
           patientName: petientName,
           patientPhone: petientPhone,
-          availableAppointments: availableAppointments,
-          username: username
+          availableAppointments: $scope.timeA
         },
         success:function(){
-         console.log(this.data);
+         console.log('------------> yaaaaaaaaaaaaaaaaay');
         }
       })
     };
@@ -48,6 +66,10 @@ angular.module('app')
       }
     }
 
+    // Create Modal
+    $scope.createModal = () => {
+      //
+    }
  })
  .component('main', {
   controller:"AppCtrl",
