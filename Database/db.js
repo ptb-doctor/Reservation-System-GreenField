@@ -33,7 +33,10 @@ var adminsSchema= new Schema({
  	},
  	reservedAppointments:{
  		type:Array
- 	}
+ 	},
+	image:{
+		type: String
+	}
 });
 
 var admins = mongoose.model ('admins', adminsSchema);

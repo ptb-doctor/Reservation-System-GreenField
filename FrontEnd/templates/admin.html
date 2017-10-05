@@ -1,54 +1,28 @@
-<!DOCTYPE html> 
-<html lang="en">
-<head>
-  <title>We care</title>
-    <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-          <style type="text/css">
-       body{
-      background-image: url('https://theinnovationenterprise.com/media/W1siZiIsImltYWdlcy93ZWItYmFja2dyb3VuZC1oZWFsdGgtZWRpdC5wbmciXV0/web-background-health-edit.png?sha=3d7f305a5528a06f');
-    }
-  </style>
-
-      </head>
-<body>
-	<nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#">We Care</a>
-          </div>
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-          </ul>
-        </div>
-      </nav>
-      <main></main>
-
 <div ng-controller="adminCtrl">
-		<div class="container">
+		<div class="container"  ng-init="loadAppointments()">
 
 	     <h1><small>Date {{$scope.date}}</small></h1>
-        
+
 	       <input type="date" name="date" id="addeddateappointment"><br>
 	         <input type="time" name="time" id="addedtimeappointment"><br>
 	           <button type="submit" class="btn btn-danger" ng-click="addApointment()">Submit</button>
 
-	         <ul>
-		        <li ng-repeat="appointment in appointments">[appointment date: {{appointmentDate}} , appointment time: {{appointmentTime}}]</li>
-	         </ul>
+            <br />
+            <br />
+
+             <center>
+               <h2>Reserved appointments:</h2>
+             </center>
+             <ul>
+               <div ng-repeat="appointment in appointments">
+                 <div class="well">
+                <li>
+                    <h4><b>Date:</b> {{appointment.availableAppointments.date}}</h4>
+                    <h4><b>Time:</b> {{appointment.availableAppointments.time}}</h4>
+                    <h4><b>Patient name:</b> {{appointment.patientName}}</h4>
+                    <h4><b>Patient phone:</b> {{appointment.patientPhone}}</h4>
+                </li>
+              </div>
+              </div>
+            </ul>
 	 </div>
-	<div class="form-group">
-     <div class="col-lg-2 col-lg-offset-2 text-center">
-	     <button id="loadreserved" class="btn btn-danger" ng-click="loadAppointments()">Load reserved appointments</button>
-      </div>
-            </div>
-</div>
-</body>
-</html>

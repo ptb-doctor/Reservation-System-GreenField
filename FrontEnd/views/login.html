@@ -8,15 +8,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <style type="text/css">
-    
-    .container{
-      margin: 55px auto;
-      width: 35%;
-      
-    }
-    button{
-      margin-top: 20px;
-    }
+
      body{
       background-image: url('https://theinnovationenterprise.com/media/W1siZiIsImltYWdlcy93ZWItYmFja2dyb3VuZC1oZWFsdGgtZWRpdC5wbmciXV0/web-background-health-edit.png?sha=3d7f305a5528a06f');
     }
@@ -41,12 +33,12 @@
       <main></main>
 
 <div ng-controller="loginCtrl">
-  <div class="container">
+  <div class="container well col-lg-4 col-lg-offset-4">
       <div class="page-header text-center">
-        <h1><medium>Please Login</medium></h1>
+        <h1><meduim style="font-family:Open Sans; font-weight:bold; color:#555;">Please Login</meduim></h1>
       </div>
       <form role="form" class="form-login" action="/login" method="post">
-      
+
           <input type="text" ng-model="username" name="username" class="form-control" id="username" placeholder="User Name" required="required"><br>
             <input type="password" ng-model="password" name="password" id="password" class="form-control" placeholder="Password" required="required"> <br>
       <button type="submit" class="btn btn-danger btn-block" ng-click="submit()">Submit</button>
