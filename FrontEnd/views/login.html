@@ -42,15 +42,14 @@
 
 <div ng-controller="loginCtrl">
   <div class="container">
-    <div class="well">
       <div class="page-header text-center">
-        <h1><small>Please Login</small></h1>
+        <h1><medium>Please Login</medium></h1>
       </div>
       <form role="form" class="form-login" action="/login" method="post">
       
-          <input type="text" ng-model="username" name="username" class="form-control" id="username" placeholder="User Name"><br>
+          <input type="text" ng-model="username" name="username" class="form-control" id="username" placeholder="User Name" required="required"><br>
             <input type="password" ng-model="password" name="password" id="password" class="form-control" placeholder="Password" required="required"> <br>
-      <button type="submit" class="btn btn-info btn-block" ng-click="submit()">Submit</button>
+      <button type="submit" class="btn btn-danger btn-block" ng-click="submit()">Submit</button>
       </form>
     </div>
   </div>
