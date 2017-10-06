@@ -19,7 +19,7 @@ angular.module('app')
 
     // Get doctor data
     $scope.getDoctorData = function(name) {
-      // console.log('55555555555555555', name);
+      console.log('55555555555555555', name);
       $.ajax({
         url:'/getDoctorData',
         method:'POST',
@@ -65,13 +65,8 @@ angular.module('app')
         }
       }
     }
-
-    // Create Modal
-    $scope.createModal = () => {
-      //
-    }
  })
  .component('main', {
   controller:"AppCtrl",
-   templateUrl: `./templates/main.html`
+   templateUrl: `./views/main.html`
  })

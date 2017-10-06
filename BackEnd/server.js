@@ -32,32 +32,17 @@ app.use(session({
 }));
 app.use(express.static(__dirname + '/../FrontEnd'));
 
-var user = '';
 
-function createSession(req, res, newUser) {
-    return req.session.regenerate(() => {
-        user = newUser;
-        req.session.user = newUser;
-        res.redirect('/index');
-    });
-}
-
+app.get('/checkIsLoggedIn', (req, res) => {
+  var checker = (!!req.session.username) ? 'true' : 'false';
+  console.log('checking isLoggedIn --------------->', !!req.session.username, checker);
+  res.send(checker);
+});
 
 app.get('/index', (req, res) => {
-    console.log('+++++++++++', req.session.user);
-    if (req.session.username) {
-        console.log('*-*-*-*-*-*-*NANANANANANANAN');
-        res.redirect('/index.html')
-    } else {
-        console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
-        res.redirect('/login')
-    }
+  res.redirect('/index.html')
 })
-app.get('/allall', function(req, res) {
-    db.find({}, (err, data) => {
-        res.send(data)
-    })
-})
+
 app.post('/reservedappointments', function(req, res) {
 
     var patient = {
@@ -72,48 +57,17 @@ app.post('/reservedappointments', function(req, res) {
         .catch(err => {
             res.status(400).send("unable to save to database")
         })
-
-
 });
 
-// *********************** THIS is the same as signup
-// app.post('/AddUser' , function (req , res) {
-// 	/* body... */
-// 	console.log('AddUser 5aoa defined')
-// 	var userAdd = {
-// 		username:req.body.username,
-// 		password:req.body.password,
-//     phoneNumber: req.body.phoneNumber,
-//     specialization: req.body.specialization
-// 	};
-// 	var user = new db(userAdd);
-// 	user.save()
-// 	.then(item=>{
-// 		res.send("item saved to database")
-// 	})
-// 	.catch(err => {
-// 		res.status(400).send("unable to save to database")
-// 	})
-// })
-
 app.get('/login', function(req, res) {
-    /* body... */
-    res.redirect('/views/login.html')
+    res.redirect('./views/login.html')
 })
 
-// app.get('/getAppointment', function(req, res) {
-//     res.send('GET request to the homepage')
-//         // get all appointment
-//         // put the data of appointment in table
-//         // table have patient name telephone number and the time of Appoin.
-//
-// })
-
-// TEST
+// Get all doctors
 app.get('/getDoctors', (req, res) => {
     db.find({}, (err, data) => {
         if (err) console.log(err);
-        console.log('------------> all users', data);
+        // console.log('------------> all users', data);
         res.send(data);
     });
 });
@@ -121,7 +75,18 @@ app.get('/getDoctors', (req, res) => {
 
 // Get specific doctor
 app.post('/getDoctorData', (req, res) => {
-    console.log('********************>', req.session.username);
+    // console.log('********************>', req.body.doctorName);
+    db.findOne({
+        username: req.body.doctorName
+    }, (err, data) => {
+        if (err) console.log(err);
+        res.send(data);
+    });
+});
+
+// Load reserved appointments
+app.get('/getDoctorReservedAppointments', (req, res) => {
+    // console.log('********************>', req.body.doctorName);
     db.findOne({
         username: req.session.username
     }, (err, data) => {
@@ -131,34 +96,8 @@ app.post('/getDoctorData', (req, res) => {
 });
 
 
-// // Logout endpoint
-app.get('/logout', function(req, res) {
-    req.session.user = null;
-    console.log('->>>>>>>>>>>>>', req.session);
-    res.redirect('/login');
-});
-//
-//  app.post('/login', function(req, res) {
-//      console.log('------------>login', req.body)
-//     var username = req.body.username;
-//     var password = req.body.password;
-//     // var salt = bcrypt.genSaltSync(10);
-//     // var hash = bcrypt.hashSync(password, salt);
-//     db.findOne({ username: username , password : password},function (err , user) {
-//
-//         if(err){
-//             console.log(err)
-//             return res.status(404).send();
-//         }
-//         if(!user){
-//             return res.status(404).send();
-//         }
-//         if(user){
-//           res.redirect ('/index.html');
-//         }
-//     })
-//
-// });
+
+// Login
 app.post('/login', function(req, res) {
     console.log('--------$$$$---->login', req.session)
     var username = req.body.username;
@@ -185,6 +124,14 @@ app.post('/login', function(req, res) {
 
 });
 
+// // Logout endpoint
+app.get('/logout', function(req, res) {
+  req.session.username = null;
+  console.log('->>>>>>>>>>>>>', req.session);
+  res.redirect('/login');
+});
+
+// Sign Up POST
 app.post('/signup', upload.any(), function(req, res) {
     var adduser = {
         username: req.body.username,
@@ -202,14 +149,15 @@ app.post('/signup', upload.any(), function(req, res) {
         .catch(err => {
             res.status(400).send("unable to save to database")
         })
-})
+});
 
+// Sign Up GET
 app.get('/signup', function(req, res) {
     /* body... */
     res.redirect('/views/signup.html');
 });
 
-// Manage database
+// Add an appointment
 app.put('/addAppointments', function(req, res) {
     console.log('-------- addappointments', req.body, '*******', req.session.username)
     db.update({
@@ -227,6 +175,7 @@ app.put('/addAppointments', function(req, res) {
     })
 });
 
+// Reserve an appointment
 app.put("/reservedappointments", function(req, res) {
     console.log('req.body ------->', req.body)
     var fullAppointment = req.body.availableAppointments.split(' ');
@@ -267,8 +216,9 @@ app.put("/reservedappointments", function(req, res) {
     })
     res.send("updateUser")
 })
+//************************************
 
-var port = process.env.PORT || 2017
+var port = process.env.PORT || 2020
 app.listen(port, () => {
     console.log('Server listening on port ', port)
 });

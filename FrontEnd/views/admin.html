@@ -1,21 +1,25 @@
 <div ng-controller="adminCtrl">
-		<div class="container"  ng-init="loadAppointments()">
+		<div class="container well"  ng-init="loadAppointments()">
 
-	     <h1><small>Date {{$scope.date}}</small></h1>
+      <center>
+<form class="form-inline">
+  <strong style="font-size: 20px; font-family:Open Sans; font-weight:bold; color:#555;">Add appointment:</strong>
 
-	       <input type="date" name="date" id="addeddateappointment"><br>
-	         <input type="time" name="time" id="addedtimeappointment"><br>
+         <input class="form-control col-lg-6 col-lg-offset-3" type="date" name="date" id="addeddateappointment">
+	         <input class="form-control col-lg-6 col-lg-offset-3" type="time" name="time" id="addedtimeappointment">
 	           <button type="submit" class="btn btn-danger" ng-click="addApointment()">Submit</button>
+           </center>
+         </form>
 
             <br />
             <br />
 
              <center>
-               <h2>Reserved appointments:</h2>
+               <h2 style="font-size: 30px; font-family:Open Sans; font-weight:bold; color:#555;">Reserved appointments:</h2>
              </center>
              <ul>
                <div ng-repeat="appointment in appointments">
-                 <div class="well">
+                 <div class="well" style="background-color: rgba(190,190,190,0.3);">
                 <li>
                     <h4><b>Date:</b> {{appointment.availableAppointments.date}}</h4>
                     <h4><b>Time:</b> {{appointment.availableAppointments.time}}</h4>
@@ -26,3 +30,4 @@
               </div>
             </ul>
 	 </div>
+</div>
