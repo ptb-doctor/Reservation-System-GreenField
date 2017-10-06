@@ -4,7 +4,7 @@ var Schema=mongoose.Schema;
 
 //database name is "admins".
 
-mongoose.connect('mongodb://localhost/reservationSystemDB',function(err,data){
+mongoose.connect('mongodb://asynco:1234@ds113445.mlab.com:13445/asynco',function(err,data){
 	if(err){
 		console.log(err)
 	}
