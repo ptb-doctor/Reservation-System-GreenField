@@ -1,6 +1,5 @@
 angular.module('app')
     .controller('adminCtrl', function($scope) {
-        $scope.date = new Date()
         $scope.appointmentDate;
         $scope.appointmentTime;
 				$scope.appointments;
@@ -30,21 +29,21 @@ angular.module('app')
             })
         };
 
-        $scope.loadAppointments = function() {
+        $scope.loadAppointments = function(name) {
             console.log('loadAppointments run');
             $.ajax({
-                url: '/getDoctorData',
-                method: 'POST',
+                url: '/getDoctorReservedAppointments',
+                method: 'GET',
                 dataType: 'json',
 								async: false,
                 success: function(data) {
+									console.log('++++++++++++++');
                     $scope.appointments = data.reservedAppointments;
-										console.log('++++++++++++++', $scope.appointments[0].availableAppointments);
                 }
             })
         }
     })
     .component('admin', {
         controller: "adminCtrl",
-        templateUrl: `./templates/admin.html`
+        templateUrl: `./views/admin.html`
     })
