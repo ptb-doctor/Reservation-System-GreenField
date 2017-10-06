@@ -19,7 +19,7 @@ angular.module('app')
 
     // Get doctor data
     $scope.getDoctorData = function(name) {
-      console.log('55555555555555555', name);
+      console.log('555555555555555557', $scope.timeA);
       $.ajax({
         url:'/getDoctorData',
         method:'POST',
@@ -37,7 +37,7 @@ angular.module('app')
     }
 
     $scope.reserveAppointment =function (time){
-
+      console.log('1111111111111111', $scope.timeA)
       var petientName= $("#pName").val();
       var petientPhone= $("#pPhon").val();
       $.ajax({
@@ -45,9 +45,12 @@ angular.module('app')
         method:'PUT',
         dataType:'json',
         data:{
-          patientName: petientName,
-          patientPhone: petientPhone,
-          availableAppointments: $scope.timeA
+          username: $scope.currentDoctor.username,
+          reservedAppointment:{
+            patientName: petientName,
+            patientPhone: petientPhone,
+            availableAppointments: $scope.timeA
+          }
         },
         success:function(){
          console.log('------------> yaaaaaaaaaaaaaaaaay');
