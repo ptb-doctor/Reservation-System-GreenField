@@ -1,4 +1,4 @@
-# Reseration System #
+# Reservation System #
 
 Welcome to Reservation System ( for medical services).
 
