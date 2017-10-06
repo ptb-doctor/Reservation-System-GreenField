@@ -37,7 +37,7 @@ angular.module('app')
                 dataType: 'json',
 								async: false,
                 success: function(data) {
-									console.log('++++++++++++++');
+									console.log('++++++++++++++', data);
                     $scope.appointments = data.reservedAppointments;
                 }
             })

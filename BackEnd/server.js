@@ -178,18 +178,17 @@ app.put('/addAppointments', function(req, res) {
 // Reserve an appointment
 app.put("/reservedappointments", function(req, res) {
     console.log('req.body ------->', req.body)
-    var fullAppointment = req.body.availableAppointments.split(' ');
+    var fullAppointment = req.body.reservedAppointment.availableAppointments.split(' ');
     var theAppointment = {
       time: fullAppointment[0],
       date: fullAppointment[1]
     }
-    req.body.availableAppointments = theAppointment;
-    console.log('time ---------------->', req.body.availableAppointments);
+    req.body.reservedAppointment.availableAppointments = theAppointment;
     db.update({
-        username: req.session.username
+        username: req.body.username
     }, {
         $pull: {
-            availableAppointments: req.body.availableAppointments
+            availableAppointments: req.body.reservedAppointment.availableAppointments
         }
     }, function(err, updateUser) {
         if (err) {
@@ -201,10 +200,10 @@ app.put("/reservedappointments", function(req, res) {
         }
     });
     db.update({
-        username: req.session.username
+        username: req.body.username
     }, {
         $push: {
-            reservedAppointments: req.body
+            reservedAppointments: req.body.reservedAppointment
         }
     }, function(err, updateUser) {
         if (err) {
@@ -218,7 +217,7 @@ app.put("/reservedappointments", function(req, res) {
 })
 //************************************
 
-var port = process.env.PORT || 8080
+var port = process.env.PORT || 2036
 app.listen(port, () => {
     console.log('Server listening on port ', port)
 });
