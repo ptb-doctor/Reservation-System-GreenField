@@ -218,7 +218,7 @@ app.put("/reservedappointments", function(req, res) {
 })
 //************************************
 
-var port = process.env.PORT || 2020
+var port = process.env.PORT || 8080
 app.listen(port, () => {
     console.log('Server listening on port ', port)
 });
