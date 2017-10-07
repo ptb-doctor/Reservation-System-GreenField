@@ -23,25 +23,31 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // var loggedIn = false;
-
+//make session
 app.use(session({
     secret: "asynco",
     resave: false,
     saveUninitialized: true
 }));
+
+// static files inside FrontEnd folder
 app.use(express.static(__dirname + '/./FrontEnd'));
 
-
+// check if doctor loggin
 app.get('/checkIsLoggedIn', (req, res) => {
   var checker = (!!req.session.username) ? 'true' : 'false';
   console.log('checking isLoggedIn --------------->', !!req.session.username, checker);
   res.send(checker);
 });
 
+
+// client page 
 app.get('/index', (req, res) => {
   res.redirect('/index.html')
 })
 
+
+//add reservedAppoinment 
 app.post('/reservedappointments', function(req, res) {
 
     var patient = {
@@ -58,6 +64,7 @@ app.post('/reservedappointments', function(req, res) {
         })
 });
 
+// get login page 
 app.get('/login', function(req, res) {
     res.redirect('./views/login.html')
 })
@@ -71,7 +78,6 @@ app.get('/getDoctors', (req, res) => {
     });
 });
 // End TEST
-
 // Get specific doctor
 app.post('/getDoctorData', (req, res) => {
     // console.log('********************>', req.body.doctorName);
@@ -96,7 +102,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
 
 
 
-// Login
+// Login page form
 app.post('/login', function(req, res) {
     console.log('--------$$$$---->login', req.session)
     var username = req.body.username;
@@ -130,7 +136,8 @@ app.get('/logout', function(req, res) {
   res.redirect('/login');
 });
 
-// Sign Up POST
+// Sign Up  form POST 
+// multer model for download image 
 app.post('/signup', upload.any(), function(req, res) {
     var adduser = {
         username: req.body.username,
@@ -156,7 +163,7 @@ app.get('/signup', function(req, res) {
     res.redirect('/views/signup.html');
 });
 
-// Add an appointment
+// Add an appointment to doctor 
 app.put('/addAppointments', function(req, res) {
     console.log('-------- addappointments', req.body, '*******', req.session.username)
     db.update({
@@ -174,7 +181,7 @@ app.put('/addAppointments', function(req, res) {
     })
 });
 
-// Reserve an appointment
+// Reserve an appointment from client 
 app.put("/reservedappointments", function(req, res) {
     console.log('req.body ------->', req.body)
     var fullAppointment = req.body.reservedAppointment.availableAppointments.split(' ');
@@ -214,8 +221,41 @@ app.put("/reservedappointments", function(req, res) {
     })
     res.send("updateUser")
 })
-//************************************
+ 
 
+ // delete reserved appoinment 
+app.delete('/deleteAppointment' , function (req , res) {
+	/* body... */
+    console.log('***********>>', req.body, req.session.username)
+    var theAppointment = {
+        availableAppointments: req.body.reservedAppointment.availableAppointments,
+        patientName: req.body.reservedAppointment.patientName,
+        patientPhone: req.body.reservedAppointment.patientPhone
+    }
+    req.body.reservedAppointment = theAppointment;
+    console.log('xxxxxxxxxxxxx>', req.body.reservedAppointment)
+	 db.update({
+        username: req.session.username
+    }, {
+        $pull: {
+            reservedAppointments: req.body.reservedAppointment
+        }
+    }, function(err, updateUser) {
+        if (err) {
+            console.log(err)
+        } else {
+
+            console.log('pull successfully', updateUser)
+            console.log(updateUser)
+        }
+    });
+})
+
+
+
+
+//************************************
+// listen to port 2036 
 var port = process.env.PORT || 2036
 app.listen(port, () => {
     console.log('Server listening on port ', port)
