@@ -2,11 +2,13 @@
 angular.module('app')
 .controller('AppCtrl', function($scope){
     $scope.doctors;
+    $scope.currentDoctor;
+    $scope.timeA;
+
     $scope.loadPage=function (){
       $.ajax({
         url:'/getDoctors',
         method:'GET',
-        contentType:'applecation/json',
         async: false,
         success:function(data){
           $scope.doctors = data;
@@ -15,24 +17,43 @@ angular.module('app')
       })
     };
 
-    $scope.reserveAppointment =function (time){
+    // Get doctor data
+    $scope.getDoctorData = function(name) {
+      console.log('555555555555555557', $scope.timeA);
+      $.ajax({
+        url:'/getDoctorData',
+        method:'POST',
+        async: false,
+        dataType: 'json',
+        data: {
+          doctorName: name
+        },
+        success: function (data){
+          $scope.currentDoctor = data;
+          console.log('--------------->', $scope.currentDoctor);
+        }
+      });
+      console.log('ssssssssssssssssssssssss');
+    }
 
+    $scope.reserveAppointment =function (time){
+      console.log('1111111111111111', $scope.timeA)
       var petientName= $("#pName").val();
       var petientPhone= $("#pPhon").val();
-      var availableAppointments= $('#time').val();
-      var username= $('#doctorName').text()
       $.ajax({
         url:'/reservedappointments',
         method:'PUT',
-        contentType:'applecation/json',
+        dataType:'json',
         data:{
-          patientName: petientName,
-          patientPhone: petientPhone,
-          availableAppointments: availableAppointments,
-          username: username
+          username: $scope.currentDoctor.username,
+          reservedAppointment:{
+            patientName: petientName,
+            patientPhone: petientPhone,
+            availableAppointments: $scope.timeA
+          }
         },
         success:function(){
-         console.log(this.data);
+         console.log('------------> yaaaaaaaaaaaaaaaaay');
         }
       })
     };
@@ -47,9 +68,8 @@ angular.module('app')
         }
       }
     }
-
  })
  .component('main', {
   controller:"AppCtrl",
-   templateUrl: `./templates/main.html`
+   templateUrl: `./views/main.html`
  })
