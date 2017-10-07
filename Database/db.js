@@ -4,7 +4,7 @@ var Schema=mongoose.Schema;
 
 //database name is "admins".
 
-mongoose.connect('mongodb://localhost/reservationSystemDB',function(err,data){
+mongoose.connect('mongodb://asynco:1234@ds113445.mlab.com:13445/asynco',function(err,data){
 	if(err){
 		console.log(err)
 	}
@@ -20,7 +20,7 @@ var adminsSchema= new Schema({
  		type: String,
  		required: true
  	},
- 	phonnumber:{
+ 	phoneNumber:{
  		type:Number,
  		required:true
  	},
@@ -28,12 +28,15 @@ var adminsSchema= new Schema({
  		type:String,
  		require:true
  	},
- 	availableappointments:{
+ 	availableAppointments:{
  		type: Array
  	},
- 	reservedappointments:{
+ 	reservedAppointments:{
  		type:Array
- 	}
+ 	},
+	image:{
+		type: String
+	}
 });
 
 var admins = mongoose.model ('admins', adminsSchema);
