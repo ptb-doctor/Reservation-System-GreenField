@@ -4,6 +4,6 @@ angular.module('app', [])
 })
 .component('index', {
   template: `
-    <navbar check-is-logged-in = "checkIsLoggedIn.bind($ctrl)" is-logged-in = "$scope.isLoggedIn"/>
+    <navbar/>
   `
 })

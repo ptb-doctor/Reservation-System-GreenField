@@ -1,6 +1,6 @@
 angular.module('app')
 //we defined this varibals to be global for the others functions 
-    .controller('adminCtrl', function($scope) {
+    .controller('adminCtrl', function($scope, $http) {
         $scope.appointmentDate;
         $scope.appointmentTime;
 				$scope.appointments;
@@ -45,6 +45,22 @@ angular.module('app')
         }
     })
     
+
+    //     $scope.deleteAppointment = (appointment) => {
+    //         console.log('asdasdasdasd;as;kdmas;kdmja;sj', appointment)
+    //         $.ajax({
+    //             url: '/deleteAppointment',
+    //             method: 'DELETE',
+    //             dataType: 'json',
+    //             data: {
+    //                 reservedAppointment: appointment
+    //             },
+    //             success: () => {
+    //                 console.log('hahahahahah')
+    //             }
+    //         })
+    //     }
+    // })
     .component('admin', {
         controller: "adminCtrl",
         templateUrl: `./views/admin.html`
