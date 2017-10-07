@@ -7,12 +7,11 @@ var app = express();
 var session = require('express-session')
 var cookieParser = require('cookie-parser')
     // var path = require('path');
-var db = require('../database/db');
-var util = require('./utility');
+var db = require('./Database/db');
 var jwt = require('jwt-simple');
 var multer = require('multer');
 var upload = multer({
-    dest: '../FrontEnd/uploads/'
+    dest: './FrontEnd/uploads/'
 });
 app.use(morgan('dev'));
 
@@ -30,7 +29,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
-app.use(express.static(__dirname + '/../FrontEnd'));
+app.use(express.static(__dirname + '/./FrontEnd'));
 
 
 app.get('/checkIsLoggedIn', (req, res) => {
