@@ -1,10 +1,11 @@
 angular.module('app')
+//we defined this varibals to be global for the others functions 
     .controller('adminCtrl', function($scope) {
         $scope.appointmentDate;
         $scope.appointmentTime;
 				$scope.appointments;
 				$scope.counter = 0;
-
+// it's for add new avalibal appointment 
         $scope.addApointment = function() {
             $scope.appointmentDate = $('#addeddateappointment').val();
             $scope.appointmentTime = $('#addedtimeappointment').val();
@@ -28,7 +29,7 @@ angular.module('app')
                 }
             })
         };
-
+// it will print the reserved appointments from the database
         $scope.loadAppointments = function(name) {
             console.log('loadAppointments run');
             $.ajax({
@@ -43,6 +44,7 @@ angular.module('app')
             })
         }
     })
+    
     .component('admin', {
         controller: "adminCtrl",
         templateUrl: `./views/admin.html`
