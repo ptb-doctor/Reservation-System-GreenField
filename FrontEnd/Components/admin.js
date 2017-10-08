@@ -10,7 +10,7 @@ $scope.addApointment = function() {
     $scope.appointmentDate = $('#addeddateappointment').val();
     $scope.appointmentTime = $('#addedtimeappointment').val();
             // for (var doctor=0 ; doctor < $scope.appointments.length ; doctor++){
-            // 	$scope.username = $scope.appointments[doctor].username;
+            //  $scope.username = $scope.appointments[doctor].username;
             // }
             console.log('+++++++++>', $scope.appointmentDate);
             $.ajax({
@@ -63,4 +63,4 @@ $scope.loadAppointments = function(name) {
     .component('admin', {
         controller: "adminCtrl",
         templateUrl: `./views/admin.html`
-    })
+})

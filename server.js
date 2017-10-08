@@ -50,7 +50,10 @@ app.get('/checkIsLoggedIn', (req, res) => {
 
 // client page 
 app.get('/index', (req, res) => {
-  res.redirect('/index.html')
+    if (!req.session.username) {
+        res.redirect('./views/signup.html');
+    }
+  res.redirect('/index.html');
 })
 
 
@@ -98,7 +101,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
         name: req.session.username
     }, (err, data) => {
         /*data is obj like => { id , name , password , phone , major , open , image }*/
-        if (err) {
+        if (err || !data) {
             console.log(err);
         }
         else {
@@ -110,8 +113,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
                 //{id , doctor , patient , time , recomendations , case}
                 res.send(info);
             })
-        }
-        
+        }       
     });
 });
 
