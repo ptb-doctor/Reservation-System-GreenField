@@ -11,8 +11,9 @@ mongoose.connect('mongodb://asynco:1234@ds113445.mlab.com:13445/asynco',function
 	console.log('connect with db');
 });
 
-var adminsSchema= new Schema({
-	username: {
+var doctors = new Schema({
+	id : Number ,
+	name: {
 		type: String,
 		required: true
 	},
@@ -20,25 +21,66 @@ var adminsSchema= new Schema({
  		type: String,
  		required: true
  	},
- 	phoneNumber:{
+ 	phone:{
  		type:Number,
  		required:true
  	},
- 	specilization:{
+ 	major:{
  		type:String,
  		require:true
  	},
- 	availableAppointments:{
+ 	open:{
  		type: Array
- 	},
- 	reservedAppointments:{
- 		type:Array
  	},
 	image:{
 		type: String
 	}
 });
 
-var admins = mongoose.model ('admins', adminsSchema);
+var patients = new Schema({
+	id : Number ,
+	name: {
+		type: String,
+		required: true
+	},
+ 	password: {
+ 		type: String,
+ 		required: true
+ 	},
+ 	phone:{
+ 		type:Number,
+ 		required:true
+ 	},
+ 	image:{
+		type: String
+	}
+});
 
-module.exports = admins;
+
+var appointments = new Schema({
+	id : Number ,
+	id_doctor: {
+		type: Number,
+		required: true
+	},
+ 	patient: {
+		type: Number,
+		required: true
+	},
+ 	time:{
+ 		type: Date,
+ 		required:true
+ 	},
+ 	recomendations:{
+		type: String
+	},
+ 	case:{
+		type: String
+	},
+});
+
+
+exports.doctors = mongoose.model ('doctors', doctors);
+exports.patients = mongoose.model ('patients', patients);
+exports.appointments = mongoose.model ('appointments', appointments);
+
