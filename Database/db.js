@@ -3,8 +3,8 @@ var mongoose=require('mongoose');
 var Schema=mongoose.Schema;
 
 //database name is "admins".
-
-mongoose.connect('mongodb://asynco:1234@ds113445.mlab.com:13445/asynco',function(err,data){
+//mongodb://asynco:1234@ds113445.mlab.com:13445/asynco
+mongoose.connect('mongodb://localhost/ptb',function(err,data){
 	if(err){
 		console.log(err)
 	}
@@ -59,7 +59,7 @@ var patients = new Schema({
 
 var appointments = new Schema({
 	id : Number ,
-	id_doctor: {
+	doctor: {
 		type: Number,
 		required: true
 	},

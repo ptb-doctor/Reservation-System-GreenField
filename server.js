@@ -7,7 +7,11 @@ var app = express();
 var session = require('express-session')
 var cookieParser = require('cookie-parser')
     // var path = require('path');
-var db = require('./Database/db');
+//schemas :
+var doctors = require('./Database/db').doctors;
+var patients = require('./Database/db').patients;
+var appointments = require('./Database/db').appointments;
+
 var jwt = require('jwt-simple');
 var multer = require('multer');
 var upload = multer({
@@ -38,7 +42,7 @@ app.get('/checkIsLoggedIn', (req, res) => {
     // this one will start automaticlly with the navBar component - navBar.html line:1 -
     // to check if a doctor is logged in in order to show or hide some 
     // elements in the top bar
-  var checker = (!!req.session.username) ? 'true' : 'false';
+  var checker = JSON.stringify(!!req.session.username);
   console.log('checking isLoggedIn --------------->', !!req.session.username, checker);
   res.send(checker);
 });
@@ -49,28 +53,7 @@ app.get('/index', (req, res) => {
   res.redirect('/index.html')
 })
 
-// ========================
-// this one is ignored     ||
-// check the "PUT" request ||
-// ========================
-//add reservedAppoinment 
-app.post('/reservedappointments', function(req, res) {
-   
-    console.log("========================")
-    console.log(req.body)
-    var patient = {
-        patientName: req.body.patientName,
-        phoneNumber: req.body.phoneNumber,
-    };
-    var newpatient = new db(patient);
-    newpatient.save()
-        .then(item => {
-            res.send("item saved to database")
-        })
-        .catch(err => {
-            res.status(400).send("unable to save to database")
-        })
-});
+
 
 // get login page 
 app.get('/login', function(req, res) {
@@ -81,7 +64,7 @@ app.get('/login', function(req, res) {
 app.get('/getDoctors', (req, res) => {
     // this one will start automaticlly when the - main.html - is loaded
     // it will display all the doctors wether they have an open reservation or not.
-    db.find({}, (err, data) => {
+    doctors.find({}, (err, data) => {
         if (err) console.log(err);
         // console.log('------------> all users', data);
         res.send(data);
@@ -93,8 +76,8 @@ app.post('/getDoctorData', (req, res) => {
      // this request will be triggered when the user click on the doctor picture
       // in the - main.html - and it will find the doctor and return his data
     // console.log('********************>', req.body.doctorName);
-    db.findOne({
-        username: req.body.doctorName
+    doctors.findOne({
+        name: req.body.doctorName
     }, (err, data) => {
         if (err) console.log(err);
         res.send(data);
@@ -106,11 +89,20 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
     // this request is triggered automatically when the doctor logs in to get
     // his resrvaed dates 
     // console.log('********************>', req.body.doctorName);
-    db.findOne({
-        username: req.session.username
+    doctors.findOne({
+        name: req.session.username
     }, (err, data) => {
+        /*data is obj like => { id , name , password , phone , major , open , image }*/
         if (err) console.log(err);
-        res.send(data);
+        else {
+            appointments.find({doctor : data.id}, (error, info) => {
+                if (err) return console.log(err);
+                //info is array of objects , each object is an appointment
+                //{id , doctor , patient , time , recomendations , case}
+                res.send(info);
+            })
+        }
+        
     });
 });
 
@@ -123,30 +115,37 @@ app.post('/login', function(req, res) {
     var password = req.body.password;
     // var salt = bcrypt.genSaltSync(10);
     // var hash = bcrypt.hashSync(password, salt);
-    db.findOne({
-        username: username
-    }, function(err, user) {
-        if (err) {
-            console.log(err)
-            return res.status(404).send();
+    doctors.findOne({
+        name: username
+    }, function (err, doctor) {
+        if (err) return res.status(404).send();
+        if (!doctor) {
+            patients.findOne({
+                name: username
+            }, (error , patient) => {
+                if (err) return res.status(404).send();
+                if (!patient) return res.redirect('/signup');
+                if (patient.password !== password) return res.status(404).send();
+                req.session.username = patient.username;
+                req.session.username = patient.password;
+                res.redirect('/index');
+            })
+            // return res.status(404).send();
         }
-        if (!user) {
-            return res.status(404).send();
-        }
-        if (user) {
-            // Create session
-            req.session.username = user.username;
-            console.log('---------------------> ', req.session);
-            res.redirect('/index')
-        }
+        if (doctor.password !== password) return res.status(404).send();
+        // Create session
+        req.session.username = doctor.username;
+        req.session.username = doctor.password;
+        res.redirect('/index');
     })
 
 });
 
-// // Logout endpoint
+//Logout endpoint
 app.get('/logout', function(req, res) {
     // it will be triggered by the log out button 
   req.session.username = null;
+  req.session.password = null;
   console.log('->>>>>>>>>>>>>', req.session);
   res.redirect('/login');
 });
@@ -158,23 +157,55 @@ app.post('/signup', upload.any()/*?????*/, function(req, res) {
 // it will use multar to upload the photo 
 // but it will be stored locally so if opened in another device it 
 // won't appeare, so I recommend another method
-    var adduser = {
-        username: req.body.username,
-        password: req.body.password,
-        phoneNumber: req.body.phoneNumber,
-        specilization: req.body.specilization,
-        image: req.files[0].filename
-    };
-    console.log(adduser.image);
-    var user = new db(adduser);
-    user.save()
-        .then(item => {
-            res.redirect("/login")
-        })
-        .catch(err => {
-            res.status(400).send("unable to save to database")
-        })
+
+//check if the username is already used  :
+patients.find({name : req.body.username}, (error, patient)=> {
+    doctors.find({name : req.body.username}, (err, doctor)=> {
+        if (doctor || err || error || patient) return res.send("error or user name is already taken") ;
+        var addDoc = {
+            name: req.body.username,
+            password: req.body.password,
+            phone: req.body.phoneNumber,
+            major: req.body.specilization,
+            image: req.files[0].filename
+        };
+        var user = new doctors(addDoc);
+        user.save()
+            .then(item => {
+                res.redirect("/login")
+            })
+            .catch(err => {
+                res.status(400).send("unable to save to database")
+            })
+        
+    })
 });
+
+
+//sign up a patient :
+app.post('/patient', (req, res) => {
+    patients.find({name : req.body.username}, (error, patient)=> {
+        doctors.find({name : req.body.username}, (err, doctor)=> {
+            if (doctor || err || error || patient) return res.send("error or user name is already taken") ;
+            var addPatient = {
+                name: req.body.username,
+                password: req.body.password,
+                phone: req.body.phoneNumber,
+                image: req.files[0].filename
+            };
+            var user = new patients(addPatient);
+            user.save()
+                .then(item => {
+                    res.redirect("/login")
+                })
+                .catch(err => {
+                    res.status(400).send("unable to save to database")
+                })
+            
+        })
+    });
+})
+
 
 // Sign Up GET
 app.get('/signup', function(req, res) {
@@ -187,11 +218,11 @@ app.put('/addAppointments', function(req, res) {
     // this request will be triggered by - admin.html - 
     // and will store the new appointment in the db.
     console.log('-------- addappointments', req.body, '*******', req.session.username)
-    db.update({
-        username: req.session.username
+    doctors.update({
+        name: req.session.username
     }, {
         $push: {
-            availableAppointments: req.body.newAppointment
+            open: req.body.newAppointment
         }
     }, function(err, updateUser) {
         if (err) {
