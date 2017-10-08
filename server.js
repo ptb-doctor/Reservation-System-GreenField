@@ -158,17 +158,18 @@ app.post('/signup', upload.any()/*?????*/, function(req, res) {
 // but it will be stored locally so if opened in another device it 
 // won't appeare, so I recommend another method
 
-    //check if the username is already used  :
-    doctors.find({name : req.body.username}, (err, data)=> {
-        if (data || err) return res.send("error or user name is already taken") 
-        var adduser = {
+//check if the username is already used  :
+patients.find({name : req.body.username}, (error, patient)=> {
+    doctors.find({name : req.body.username}, (err, doctor)=> {
+        if (doctor || err || error || patient) return res.send("error or user name is already taken") ;
+        var addDoc = {
             name: req.body.username,
             password: req.body.password,
             phone: req.body.phoneNumber,
             major: req.body.specilization,
             image: req.files[0].filename
         };
-        var user = new doctors(adduser);
+        var user = new doctors(addDoc);
         user.save()
             .then(item => {
                 res.redirect("/login")
@@ -179,6 +180,32 @@ app.post('/signup', upload.any()/*?????*/, function(req, res) {
         
     })
 });
+
+
+//sign up a patient :
+app.post('/patient', (req, res) => {
+    patients.find({name : req.body.username}, (error, patient)=> {
+        doctors.find({name : req.body.username}, (err, doctor)=> {
+            if (doctor || err || error || patient) return res.send("error or user name is already taken") ;
+            var addPatient = {
+                name: req.body.username,
+                password: req.body.password,
+                phone: req.body.phoneNumber,
+                image: req.files[0].filename
+            };
+            var user = new patients(addPatient);
+            user.save()
+                .then(item => {
+                    res.redirect("/login")
+                })
+                .catch(err => {
+                    res.status(400).send("unable to save to database")
+                })
+            
+        })
+    });
+})
+
 
 // Sign Up GET
 app.get('/signup', function(req, res) {
@@ -191,11 +218,11 @@ app.put('/addAppointments', function(req, res) {
     // this request will be triggered by - admin.html - 
     // and will store the new appointment in the db.
     console.log('-------- addappointments', req.body, '*******', req.session.username)
-    db.update({
-        username: req.session.username
+    doctors.update({
+        name: req.session.username
     }, {
         $push: {
-            availableAppointments: req.body.newAppointment
+            open: req.body.newAppointment
         }
     }, function(err, updateUser) {
         if (err) {
