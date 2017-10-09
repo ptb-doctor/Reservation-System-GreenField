@@ -6,7 +6,25 @@ var bodyParser = require('body-parser');
 var app = express();
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
+// Add headers
+app.use(function (req, res, next) {
 
+   // Website you wish to allow to connect
+   res.setHeader('Access-Control-Allow-Origin', '*');
+
+   // Request methods you wish to allow
+   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+   // Request headers you wish to allow
+   res.setHeader('Access-Control-Allow-Headers', '*');
+
+   // Set to true if you need the website to include cookies in the requests sent
+   // to the API (e.g. in case you use sessions)
+   res.setHeader('Access-Control-Allow-Credentials', true);
+
+   // Pass to next layer of middleware
+   next();
+});
 
     // var path = require('path');
 //schemas :
@@ -111,7 +129,7 @@ app.post('/getDoctorData', (req, res) => {
 });
 
 
-// Load reserved appointments
+// Load reserved appointments from doctor side (admin.js)
 app.get('/getDoctorReservedAppointments', (req, res) => {
     // this request is triggered automatically when the doctor logs in to get
     // his resrvaed dates 
@@ -160,7 +178,7 @@ app.post('/login', function (req, res) {
             // Create session
             req.session.username = doctor[0].username;
             req.session.username = doctor[0].password;
-            return res.sendFile(__dirname + '/FrontEnd/views/admin.html');
+            return res.sendFile(__dirname + '/FrontEnd/index.html');
         }
         patients.find({
             name: username
@@ -303,7 +321,7 @@ app.put('/addAppointments', function(req, res) {
 
 //get patient profile : 
 app.get('/patientprofile', (req , res) => {
-    if (!req.session) {
+    if (!req.session.username) {
         console.log('patient profile redirecting to login');
         return res.sendFile(__dirname+'/FrontEnd/views/login.html');
     } else {   
@@ -312,7 +330,7 @@ app.get('/patientprofile', (req , res) => {
         patients.find({name : req.session.username}, (err, data) => {
             if (err) return res.send({});
             appointments.find({patient : data.id}, (error , appointments)=> {
-                data.appointmen = appointments
+                data.appointments = appointments
                 return res.send(data);
             })
         })
