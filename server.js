@@ -199,7 +199,7 @@ app.post('/login', function (req, res) {
             req.session.password = patient[0].password;
 
             console.log('patient is signed in ......');
-            return res.redirect('/FrontEnd/views/patientprofile.html');
+            return res.redirect('/FrontEnd/index.html');
         })
     })
 });
