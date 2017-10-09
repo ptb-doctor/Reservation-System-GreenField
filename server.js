@@ -49,11 +49,12 @@ app.get('/checkIsLoggedIn', (req, res) => {
 
 
 // client page 
-app.get('/index', (req, res) => {
+app.get('/', (req, res) => {
+    console.log('inside get/')
     if (!req.session.username) {
-        res.redirect('./views/signup.html');
+        res.sendFile('/views/signup.html');
     }
-  res.redirect('/index.html');
+  res.redirect('/i.html');
 })
 
 
@@ -69,7 +70,7 @@ app.get('/getDoctors', (req, res) => {
     // it will display all the doctors wether they have an open reservation or not.
     doctors.find({}, (err, data) => {
         if (err) {
-            console.log(err);
+            console.log('err : ', err);
         }
         // console.log('------------> all users', data);
         res.send(data);
@@ -172,8 +173,14 @@ app.post('/signup', upload.any(), function(req, res) {
 
 //check if the username is already used  :
     patients.find({name : req.body.username}, (error, patient)=> {
+        if (error) {
+            return res.send("error with finding patients names") ;
+        }
         doctors.find({name : req.body.username}, (err, doctor)=> {
-            if (doctor || err || error || patient) return res.send("error or user name is already taken") ;
+            if (err) {
+                return res.send("error with finding doctors names") ;
+            }
+            if (doctor || patient) return res.send("error or user name is already taken") ;
             var addDoc = {
                 name: req.body.username,
                 password: req.body.password,
