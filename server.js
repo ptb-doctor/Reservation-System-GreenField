@@ -70,7 +70,7 @@ app.get('/checkIsLoggedIn', (req, res) => {
         } else {
             patients.find({name : req.session.username}, (error , patient)=>{
                 if (patient.length > 0) {
-                    return res.search('patient');
+                    return res.send('patient');
                 }
                 return res.send('false');
             })
