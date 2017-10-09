@@ -1,4 +1,4 @@
-angular.module('app')
+angular.module('patient')
 .component('patientprofile', {
         controller: "patientprofileCtrl",
         templateUrl: `./views/patientprofile.html`
