@@ -35,7 +35,7 @@ app.use(session({
 }));
 
 // static files inside FrontEnd folder
-app.use(express.static(__dirname + '/./FrontEnd'));
+//app.use(express.static(__dirname + '/./FrontEnd'));
 
 // check if doctor loggin
 app.get('/checkIsLoggedIn', (req, res) => {
@@ -52,16 +52,19 @@ app.get('/checkIsLoggedIn', (req, res) => {
 app.get('/', (req, res) => {
     console.log('inside get/')
     if (!req.session.username) {
-        res.sendFile('/views/signup.html');
+        res.status(200);
+        res.sendFile(__dirname+'/FrontEnd/views/signup.html');
+    }else{
+      res.status(200);
+      res.sendFile(__dirname+'/FrontEnd/index.html');
     }
-  res.redirect('/i.html');
 })
 
 
 
 // get login page 
 app.get('/login', function(req, res) {
-    res.redirect('./views/login.html')
+    res.sendFile(__dirname+'/FrontEnd/views/login.html')
 })
 
 // Get all doctors
@@ -142,7 +145,7 @@ app.post('/login', function (req, res) {
                 if (patient.password !== password) return res.status(404).send();
                 req.session.username = patient.username;
                 req.session.username = patient.password;
-                res.redirect('/index');
+                res.sendFile(__dirname+'/FrontEnd/index.html');
             })
             // return res.status(404).send();
         }
@@ -150,7 +153,7 @@ app.post('/login', function (req, res) {
         // Create session
         req.session.username = doctor.username;
         req.session.username = doctor.password;
-        res.redirect('/index');
+        res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
     })
 });
 
@@ -172,6 +175,8 @@ app.post('/signup', upload.any(), function(req, res) {
 // won't appeare, so I recommend another method
 
 //check if the username is already used  :
+
+    console.log(req.body)
     patients.find({name : req.body.username}, (error, patient)=> {
         if (error) {
             return res.send("error with finding patients names") ;
@@ -181,6 +186,7 @@ app.post('/signup', upload.any(), function(req, res) {
                 return res.send("error with finding doctors names") ;
             }
             if (doctor || patient) return res.send("error or user name is already taken") ;
+
             var addDoc = {
                 name: req.body.username,
                 password: req.body.password,
@@ -191,14 +197,14 @@ app.post('/signup', upload.any(), function(req, res) {
             var user = new doctors(addDoc);
             user.save()
                 .then(item => {
-                    res.redirect("/login")
+                    res.sendFile(__dirname+'/FrontEnd/views/login.html');
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
                 })
             
         })
-    });
+    })
 });
 
 //sign up a patient :
@@ -229,7 +235,7 @@ app.post('/patient', (req, res) => {
 // Sign Up GET
 app.get('/signup', function(req, res) {
     /* body... */
-    res.redirect('/views/signup.html');
+    res.sendFile(__dirname+'FrontEnd/views/signup.html')
 });
 
 // Add an appointment to doctor 
