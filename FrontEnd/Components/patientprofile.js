@@ -5,18 +5,17 @@ angular.module('app')
  })
 .controller('patientprofileCtrl', function($scope, $http) {
     console.log('hiiii')
-    //$scope.profile;
+    $scope.profile;
     $.ajax({
                 url:'/patientprofile',
                 dataType: 'json',
                 async: false,
                 success: function(data) {
                    console.log(data)
-                  // $scope.profile=data 
+                   $scope.profile=data 
                 }
                 ,error:function(){
                     console.log('errrrrrrrror')
                 }
             });
-    console.log('lllll')
 })

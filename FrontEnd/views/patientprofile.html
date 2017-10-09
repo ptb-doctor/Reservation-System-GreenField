@@ -1,8 +1,35 @@
-<h1>hello</h1>
-      <img src={{profile.image}}>
-      <h3>{{profile.name}}</h3>
-      <h3>{{profile.phone}}</h3>
 
+
+ <div class="media">
+   <div class="font">
+
+    <div>
+      <a class="pull-left" href="#">   
+        <img style= "margin-right: 40px; margin-left:30px" class="img-rounded" src={{profile.image}} width="150" height="250" />
+      </a>
+      <br>
+    </div>
+    <br>
+    <div>
+      <span style="color:#2E8B57; font-size: 55px;" > Name: </span><span style="color: black; font-size: 55px;">{{profile.name}}</span>
+    </div>  
+    <br>
+    <div>
+      <span style="color:#2E8B57; font-size: 55px"> Phone: </span> <span style="color: black; font-size: 55px;">{{profile.phone}} </span>
+    </div>
+  <br>
+</div>
+</div>
+
+<style>
+.font{
+  font-style: normal;
+  font-family: courier;
+  font-weight: bold;
+  font-size: 18px;
+};
+</style>
+<hr>
 
        <ul>
                <div ng-repeat="appointment in profile.appointment">
