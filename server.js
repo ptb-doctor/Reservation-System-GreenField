@@ -62,9 +62,24 @@ app.get('/checkIsLoggedIn', (req, res) => {
     // this one will start automaticlly with the navBar component - navBar.html line:1 -
     // to check if a doctor is logged in in order to show or hide some 
     // elements in the top bar
-  var checker = JSON.stringify(!!req.session.username);
-  console.log('checking isLoggedIn --------------->', req.session, checker);
-  res.send(checker);
+  var checker = !!req.session.username;
+  if (checker) {
+    doctors.find({name : req.session.username}, (err, data) => {
+        if (data.length > 0) {
+            return res.send('doctor');
+        } else {
+            patients.find({name : req.session.username}, (error , patient)=>{
+                if (patient.length > 0) {
+                    return res.search('patient');
+                }
+                return res.send('false');
+            })
+        }
+    })
+  } else {
+    console.log('checking isLoggedIn ---------------> false ');
+    res.send(checker);
+  }
 });
 
 
@@ -333,6 +348,7 @@ app.get('/patientprofile', (req , res) => {
         patients.find({name : req.session.username}, (err, data) => {
             if (err) return res.send({});
             appointments.find({patient : data.id}, (error , appointments)=> {
+                if (error || appointments.length === 0) return res.send('whaaaat??')
                 console.log(data)
                 data[0].appointments = appointments
                 return res.send(data[0]);
@@ -343,60 +359,65 @@ app.get('/patientprofile', (req , res) => {
 
 
 // Reserve an appointment from client 
+/*i want to recieve doctor body as : 
+    doctor : {as schema} ,
+    case : 'string of case description',
+    opens : {object of schema as ssent}
+*/
 app.put("/reservedappointments", function(req, res) {
     // this request is triggered by the submit button by when the user 
     // chooses an appointment to reserve, 
-    console.log('req.body ------->', req.body)
-    var fullAppointment = req.body.reservedAppointment.availableAppointments.split(' ');
-    var theAppointment = {
-      time: fullAppointment[0],
-      date: fullAppointment[1]
-    }
-    req.body.reservedAppointment.availableAppointments = theAppointment;
-    db.update({
-        username: req.body.username
-    }, {
-        // removing the appointment from the available
-        $pull: {
-            availableAppointments: req.body.reservedAppointment.availableAppointments
-        }
-    }, function(err, updateUser) {
-        if (err) {
-            console.log(err)
-        } else {
+    console.log('req.body at reservedappointments------->', req.body);
+    deleter (req.body.doctor.id , req.body.opens , ()=> {
+        patients.find({name: req.session.username}, (err, patient) => {
+            var obj = {
+                doctor: req.body.doctor.id ,
+                patient: patient.id,
+                time: [req.body.opens] ,
+                recomendations: '' ,
+                case: req.body.case
+            }
+        })
 
-            console.log('pull successfully', updateUser)
-            console.log(updateUser)
-        }
-    });
-    db.update({
-        username: req.body.username
-    }, {
-        $push: {
-            // putting the appointment in the reserved
-            reservedAppointments: req.body.reservedAppointment
-        }
-    }, function(err, updateUser) {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log('push to reservedAppointments')
-            console.log(updateUser)
-        }
     })
-    res.send("updateUser")
 })
  
 
  // delete reserved appoinment 
 app.delete('/deleteAppointment' , function (req , res) {
-    // this one doesn't work 
-    console.log('deleteAppointment ======================>>', req.body.reservedAppointment, req.session.username)
+    //i will recieve appointment object like the schema 
+    console.log('deleteAppointment ======================>>', req.body, req.session.username)
     appointments.remove({id : req.body.reservedAppointment.id}, function(err, data) {
-        if (err) {return console.log('error removing')}
+        if (err) {return console.log('error removing reserved appoinment')}
         console.log('data removed : ' ,data )
     })
 })
+
+ // delete open appoinment 
+app.delete('/deleteOpenAppointment' , function (req , res) {
+    //i will recieve appointment object like the schema 
+    console.log('deleteAppointment ======================>>', req.body, req.session.username)
+    deleter (req.body.reservedAppointment.id, req.body , ()=>{
+        res.send();
+    })
+    
+})
+
+function deleter (id , opens , cb) {
+    doctors.update({
+        id : id
+    }, {
+        $pull : {
+            open : opens
+        }
+    }, (err, updated) => {
+        if (err) console.log('err deleteing open appointment', req.body);
+        else {
+            console.log('deleted : ' , updated)
+            cb();
+        }
+    })
+}
 
 
 
