@@ -1,6 +1,7 @@
 angular.module('app')
 .controller('navBar', ($scope, $http) => {
   $scope.isLoggedIn = false;
+  $scope.showPro = false;
   $scope.checkIsLoggedIn = function() {
     console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
     // $http({
@@ -20,6 +21,10 @@ angular.module('app')
       }
     })
   }
+
+  $scope.profile = function (){
+    $scope.showPro = true;
+}
 })
 .component('navbar',{
   templateUrl: './views/navBar.html'
