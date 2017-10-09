@@ -4,13 +4,19 @@ angular.module('app')
         templateUrl: `./views/patientprofile.html`
  })
 .controller('patientprofileCtrl', function($scope, $http) {
-    $scope.profile;
+    console.log('hiiii')
+    //$scope.profile;
     $.ajax({
-                url: '/patientprofile',
+                url:'/patientprofile',
                 dataType: 'json',
                 async: false,
                 success: function(data) {
-                   $scope.profile=data 
+                   console.log(data)
+                  // $scope.profile=data 
+                }
+                ,error:function(){
+                    console.log('errrrrrrrror')
                 }
             });
-})}
+    console.log('lllll')
+})
