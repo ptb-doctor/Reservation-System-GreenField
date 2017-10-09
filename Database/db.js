@@ -4,12 +4,6 @@ var Schema=mongoose.Schema;
 
 //database name is "admins".
 //mongodb://asynco:1234@ds113445.mlab.com:13445/asynco
-mongoose.connect('mongodb://localhost/ptb',function(err,data){
-	if(err){
-		console.log(err)
-	}
-	console.log('connect with db');
-});
 
 var doctors = new Schema({
 	id : Number ,
@@ -84,3 +78,12 @@ exports.doctors = mongoose.model ('doctors', doctors);
 exports.patients = mongoose.model ('patients', patients);
 exports.appointments = mongoose.model ('appointments', appointments);
 
+// mongoose.connect('mongodb://localhost/ptb',function(err,data){
+// 	if(err){
+// 		console.log(err)
+// 	}
+// 	console.log('connect with db');
+// });
+mongoose.connect('mongodb://localhost/ptb', { useMongoClient: true })
+    .then(() => console.log('connect with db'))
+    .catch(err => console.error(err));
