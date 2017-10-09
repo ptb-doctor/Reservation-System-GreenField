@@ -6,7 +6,25 @@ var bodyParser = require('body-parser');
 var app = express();
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
+// Add headers
+app.use(function (req, res, next) {
 
+   // Website you wish to allow to connect
+   res.setHeader('Access-Control-Allow-Origin', '*');
+
+   // Request methods you wish to allow
+   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+   // Request headers you wish to allow
+   res.setHeader('Access-Control-Allow-Headers', '*');
+
+   // Set to true if you need the website to include cookies in the requests sent
+   // to the API (e.g. in case you use sessions)
+   res.setHeader('Access-Control-Allow-Credentials', true);
+
+   // Pass to next layer of middleware
+   next();
+});
 
     // var path = require('path');
 //schemas :
@@ -37,7 +55,7 @@ app.use(session({
 }));
 
 // static files inside FrontEnd folder
-//app.use(express.static(__dirname + '/./FrontEnd'));
+app.use(express.static(__dirname ));
 
 // check if doctor loggin
 app.get('/checkIsLoggedIn', (req, res) => {
@@ -54,19 +72,32 @@ app.get('/checkIsLoggedIn', (req, res) => {
 app.get('/', (req, res) => {
     console.log('inside get/')
     if (!req.session.username) {
-        res.status(200);
-        res.sendFile(__dirname+'/FrontEnd/views/signup.html');
-    }else{
-      res.status(200);
-      res.sendFile(__dirname+'/FrontEnd/index.html');
+        console.log('idon\'t  have a session');
+        //res.status(200);
+        return res.redirect('/FrontEnd/views/login.html');
+    } else {
+      console.log('i have a session');
+      //res.status(200);
+      res.redirect('/FrontEnd/index.html');
     }
 })
 
-
+app.get('/index', (req, res) => {
+    console.log('inside get/')
+    if (!req.session.username) {
+        console.log('idon\'t  have a session');
+        //res.status(200);
+        return res.redirect('/FrontEnd/views/login.html');
+    } else {
+      console.log('i have a session');
+      //res.status(200);
+      res.redirect('/FrontEnd/index.html');
+    }
+})
 
 // get login page 
 app.get('/login', function(req, res) {
-    res.sendFile(__dirname+'/FrontEnd/views/login.html');
+    res.redirect('/FrontEnd/views/login.html');
 })
 
 // Get all doctors
@@ -98,7 +129,7 @@ app.post('/getDoctorData', (req, res) => {
 });
 
 
-// Load reserved appointments
+// Load reserved appointments from doctor side (admin.js)
 app.get('/getDoctorReservedAppointments', (req, res) => {
     // this request is triggered automatically when the doctor logs in to get
     // his resrvaed dates 
@@ -139,27 +170,34 @@ app.post('/login', function (req, res) {
             return res.status(404).send();
         }
         if (doctor.length) {
+            console.log (username , ' is a doctor !!');
             if (doctor[0].password !== password) {
                 console.log('incorrect password  ', doctor[0]);
-                return res.sendFile(__dirname+'/FrontEnd/views/login.html');
+                return res.redirect('/FrontEnd/views/login.html');
             }
             // Create session
             req.session.username = doctor[0].username;
             req.session.username = doctor[0].password;
-            return res.redirect('./views/admin');
+            return res.redirect('/FrontEnd/index.html');
         }
         patients.find({
             name: username
         }, (error , patient) => {
             if (err) return res.status(404).send();
-            if (!patient.length) return res.redirect('/signup');
+            if (!patient.length) {
+                console.log('not found in db !!');
+                return res.redirect('/FrontEnd/views/login.html');
+            }
+            console.log (username , ' is a patient !!');
             if (patient[0].password !== password) {
                 console.log('incorrect password');
-                return res.sendFile(__dirname+'/FrontEnd/views/login.html');
+                return res.redirect('/FrontEnd/views/login.html');
             }
             req.session.username = patient[0].username;
             req.session.username = patient[0].password;
-            res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
+
+            console.log('patient is signed in ......');
+            return res.redirect('/FrontEnd/views/patientprofile.html');
         })
     })
 });
@@ -183,7 +221,7 @@ app.post('/signup', upload.any(), function(req, res) {
 
 //check if the username is already used  :
 
-    console.log(req.body)
+    //console.log(req.body)
     patients.find({name : req.body.username}, (error, patient)=> {
         if (error) {
             return res.send("error with finding patients names") ;
@@ -204,10 +242,12 @@ app.post('/signup', upload.any(), function(req, res) {
                 major: req.body.specilization,
                 image: req.files[0].filename
             };
+            console.log('req.body : ', req.body)
+            console.log('req.body : ', req.files)
             var user = new doctors(addDoc);
             user.save()
                 .then(item => {
-                    res.sendFile(__dirname+'/FrontEnd/views/login.html');
+                    res.redirect('/FrontEnd/views/login.html');
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -220,32 +260,43 @@ app.post('/signup', upload.any(), function(req, res) {
 //sign up a patient :
 app.post('/patient', (req, res) => {
     patients.find({name : req.body.username}, (error, patient)=> {
+        if (error) {
+            return res.send("error with finding patients names") ;
+        }
         doctors.find({name : req.body.username}, (err, doctor)=> {
-            if (doctor || err || error || patient) return res.send("error or user name is already taken") ;
+
+            if (err) {
+                return res.send("error with finding doctors names") ;
+            }
+            if (doctor.length || patient.length) {
+                console.log('doctor : ', doctor , 'patient : ', patient)
+                return res.send("user name is already taken") ;
+            }
+            console.log('req.body : ', req.body)
+            console.log('req.body : ', req.files)
+
             var addPatient = {
                 name: req.body.username,
                 password: req.body.password,
                 phone: req.body.phoneNumber,
-                image: req.files[0].filename
+                image: req.body.myImage
             };
             var user = new patients(addPatient);
             user.save()
                 .then(item => {
-                    res.redirect("/login")
+                    res.redirect('/FrontEnd/views/login.html');
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
                 })
-            
         })
-    });
-})
-
+    })
+});
 
 // Sign Up GET
 app.get('/signup', function(req, res) {
     /* body... */
-    res.sendFile(__dirname+'FrontEnd/views/signup.html')
+    res.redirect('/FrontEnd/views/signup.html')
 });
 
 // Add an appointment to doctor 
@@ -267,6 +318,25 @@ app.put('/addAppointments', function(req, res) {
         }
     })
 });
+
+//get patient profile : 
+app.get('/patientprofile', (req , res) => {
+    if (!req.session.username) {
+        console.log('patient profile redirecting to login');
+        return res.redirect('/FrontEnd/views/login.html');
+    } else {   
+        console.log('patient profile for : ' , req.session.username);
+        //get paient data from db : 
+        patients.find({name : req.session.username}, (err, data) => {
+            if (err) return res.send({});
+            appointments.find({patient : data.id}, (error , appointments)=> {
+                data.appointments = appointments
+                return res.send(data);
+            })
+        })
+    }
+})
+
 
 // Reserve an appointment from client 
 app.put("/reservedappointments", function(req, res) {
