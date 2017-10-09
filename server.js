@@ -54,15 +54,28 @@ app.get('/checkIsLoggedIn', (req, res) => {
 app.get('/', (req, res) => {
     console.log('inside get/')
     if (!req.session.username) {
-        res.status(200);
-        res.sendFile(__dirname+'/FrontEnd/views/signup.html');
-    }else{
-      res.status(200);
+        console.log('idon\'t  have a session');
+        //res.status(200);
+        return res.sendFile(__dirname + '/FrontEnd/views/login.html');
+    } else {
+      console.log('i have a session');
+      //res.status(200);
       res.sendFile(__dirname+'/FrontEnd/index.html');
     }
 })
 
-
+app.get('/index', (req, res) => {
+    console.log('inside get/')
+    if (!req.session.username) {
+        console.log('idon\'t  have a session');
+        //res.status(200);
+        return res.sendFile(__dirname + '/FrontEnd/views/login.html');
+    } else {
+      console.log('i have a session');
+      //res.status(200);
+      res.sendFile(__dirname+'/FrontEnd/index.html');
+    }
+})
 
 // get login page 
 app.get('/login', function(req, res) {
@@ -139,6 +152,7 @@ app.post('/login', function (req, res) {
             return res.status(404).send();
         }
         if (doctor.length) {
+            console.log (username , ' is a doctor !!');
             if (doctor[0].password !== password) {
                 console.log('incorrect password  ', doctor[0]);
                 return res.sendFile(__dirname+'/FrontEnd/views/login.html');
@@ -153,15 +167,18 @@ app.post('/login', function (req, res) {
         }, (error , patient) => {
             if (err) return res.status(404).send();
             if (!patient.length) {
+                console.log('not found in db !!');
                 return res.sendFile(__dirname+'/FrontEnd/views/login.html');
             }
+            console.log (username , ' is a patient !!');
             if (patient[0].password !== password) {
                 console.log('incorrect password');
                 return res.sendFile(__dirname+'/FrontEnd/views/login.html');
             }
             req.session.username = patient[0].username;
             req.session.username = patient[0].password;
-            res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
+            console.log('patient is signed in ......');
+            return res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
         })
     })
 });
@@ -241,9 +258,9 @@ app.post('/patient', (req, res) => {
                 name: req.body.username,
                 password: req.body.password,
                 phone: req.body.phoneNumber,
-                image: req.files[0].filename
+                image: req.body.myImage
             };
-            var user = new doctors(addPatient);
+            var user = new patients(addPatient);
             user.save()
                 .then(item => {
                     res.sendFile(__dirname+'/FrontEnd/views/login.html');
@@ -292,13 +309,11 @@ app.get('/patientprofile', (req , res) => {
         patients.find({name : req.session.username}, (err, data) => {
             if (err) return res.send({});
             appointments.find({patient : data.id}, (error , appointments)=> {
-                data.appointments = appointments
+                data.appointmen = appointments
                 return res.send(data);
             })
         })
-        //send if 
     }
-
 })
 
 
