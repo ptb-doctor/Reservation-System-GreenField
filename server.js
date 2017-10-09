@@ -55,7 +55,7 @@ app.use(session({
 }));
 
 // static files inside FrontEnd folder
-//app.use(express.static(__dirname + '/./FrontEnd'));
+app.use(express.static(__dirname ));
 
 // check if doctor loggin
 app.get('/checkIsLoggedIn', (req, res) => {
@@ -74,11 +74,11 @@ app.get('/', (req, res) => {
     if (!req.session.username) {
         console.log('idon\'t  have a session');
         //res.status(200);
-        return res.sendFile(__dirname + '/FrontEnd/views/login.html');
+        return res.redirect('/FrontEnd/views/login.html');
     } else {
       console.log('i have a session');
       //res.status(200);
-      res.sendFile(__dirname+'/FrontEnd/index.html');
+      res.redirect('/FrontEnd/index.html');
     }
 })
 
@@ -87,17 +87,17 @@ app.get('/index', (req, res) => {
     if (!req.session.username) {
         console.log('idon\'t  have a session');
         //res.status(200);
-        return res.sendFile(__dirname + '/FrontEnd/views/login.html');
+        return res.redirect('/FrontEnd/views/login.html');
     } else {
       console.log('i have a session');
       //res.status(200);
-      res.sendFile(__dirname+'/FrontEnd/index.html');
+      res.redirect('/FrontEnd/index.html');
     }
 })
 
 // get login page 
 app.get('/login', function(req, res) {
-    res.sendFile(__dirname+'/FrontEnd/views/login.html');
+    res.redirect('/FrontEnd/views/login.html');
 })
 
 // Get all doctors
@@ -173,12 +173,12 @@ app.post('/login', function (req, res) {
             console.log (username , ' is a doctor !!');
             if (doctor[0].password !== password) {
                 console.log('incorrect password  ', doctor[0]);
-                return res.sendFile(__dirname+'/FrontEnd/views/login.html');
+                return res.redirect('/FrontEnd/views/login.html');
             }
             // Create session
             req.session.username = doctor[0].username;
             req.session.username = doctor[0].password;
-            return res.sendFile(__dirname + '/FrontEnd/index.html');
+            return res.redirect('/FrontEnd/index.html');
         }
         patients.find({
             name: username
@@ -186,18 +186,18 @@ app.post('/login', function (req, res) {
             if (err) return res.status(404).send();
             if (!patient.length) {
                 console.log('not found in db !!');
-                return res.sendFile(__dirname+'/FrontEnd/views/login.html');
+                return res.redirect('/FrontEnd/views/login.html');
             }
             console.log (username , ' is a patient !!');
             if (patient[0].password !== password) {
                 console.log('incorrect password');
-                return res.sendFile(__dirname+'/FrontEnd/views/login.html');
+                return res.redirect('/FrontEnd/views/login.html');
             }
             req.session.username = patient[0].username;
             req.session.username = patient[0].password;
 
             console.log('patient is signed in ......');
-            return res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
+            return res.redirect('/FrontEnd/views/patientprofile.html');
         })
     })
 });
@@ -247,7 +247,7 @@ app.post('/signup', upload.any(), function(req, res) {
             var user = new doctors(addDoc);
             user.save()
                 .then(item => {
-                    res.sendFile(__dirname+'/FrontEnd/views/login.html');
+                    res.redirect('/FrontEnd/views/login.html');
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -284,7 +284,7 @@ app.post('/patient', (req, res) => {
             var user = new patients(addPatient);
             user.save()
                 .then(item => {
-                    res.sendFile(__dirname+'/FrontEnd/views/login.html');
+                    res.redirect('/FrontEnd/views/login.html');
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -296,7 +296,7 @@ app.post('/patient', (req, res) => {
 // Sign Up GET
 app.get('/signup', function(req, res) {
     /* body... */
-    res.sendFile(__dirname+'/FrontEnd/views/signup.html')
+    res.redirect('/FrontEnd/views/signup.html')
 });
 
 // Add an appointment to doctor 
@@ -323,7 +323,7 @@ app.put('/addAppointments', function(req, res) {
 app.get('/patientprofile', (req , res) => {
     if (!req.session.username) {
         console.log('patient profile redirecting to login');
-        return res.sendFile(__dirname+'/FrontEnd/views/login.html');
+        return res.redirect('/FrontEnd/views/login.html');
     } else {   
         console.log('patient profile for : ' , req.session.username);
         //get paient data from db : 
