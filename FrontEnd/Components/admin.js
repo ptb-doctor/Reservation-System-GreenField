@@ -59,11 +59,25 @@ $scope.getDocInfo = function(){
    })
 }
 
+$scope.deleteAppointment = (appointment) => {
+    console.log('asdasdasdasd;as;kdmas;kdmja;sj', appointment)
+    $.ajax({
+        url: '/deleteAppointment',
+        method: 'DELETE',
+        dataType: 'json',
+        data: {
+            reservedAppointment: appointment
+        },
+        success: () => {
+            console.log('hahahahahah')
+        }
+    })
+}
 
-        $scope.deleteAppointment = (appointment) => {
+        $scope.deleteOpenAppointment = (appointment) => {
             console.log('asdasdasdasd;as;kdmas;kdmja;sj', appointment)
             $.ajax({
-                url: '/deleteAppointment',
+                url: '/deleteOpenAppointment',
                 method: 'DELETE',
                 dataType: 'json',
                 data: {
