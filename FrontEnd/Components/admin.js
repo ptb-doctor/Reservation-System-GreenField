@@ -1,10 +1,11 @@
 angular.module('app')
 //we defined this varibals to be global for the others functions 
 .controller('adminCtrl', function($scope, $http) {
-    $scope.appointmentDate;
-    $scope.appointmentTime;
-    $scope.appointments;
-    $scope.counter = 0;
+   $scope.docInfo = {}
+    // $scope.appointmentDate;
+    // $scope.appointmentTime;
+    // $scope.appointments;
+    // $scope.counter = 0;
 // it's for add new avalibal appointment 
 $scope.addApointment = function() {
     $scope.appointmentDate = $('#addeddateappointment').val();
@@ -30,25 +31,53 @@ $scope.addApointment = function() {
             })
         };
 // it will print the reserved appointments from the database
-$scope.loadAppointments = function(name) {
-    console.log('loadAppointments run');
+// $scope.loadAppointments = function() {
+//     console.log('loadAppointments run');
+//     $.ajax({
+//         url: '/getDoctorReservedAppointments',
+//         method: 'GET',
+//         dataType: 'json',
+//         async: false,
+//         success: function(data) {
+//            console.log('++++++++++++++', data);
+//            $scope.appointments = data.reservedAppointments;
+//        }
+//    })
+// }
+
+$scope.getDocInfo = function(){
+    console.log("getting doctor")
     $.ajax({
-        url: '/getDoctorReservedAppointments',
+        url: '/getDocInfo',
         method: 'GET',
         dataType: 'json',
         async: false,
         success: function(data) {
            console.log('++++++++++++++', data);
-           $scope.appointments = data.reservedAppointments;
+           $scope.docInfo = data[0]
        }
    })
 }
 
+$scope.deleteAppointment = (appointment) => {
+    console.log('asdasdasdasd;as;kdmas;kdmja;sj', appointment)
+    $.ajax({
+        url: '/deleteAppointment',
+        method: 'DELETE',
+        dataType: 'json',
+        data: {
+            reservedAppointment: appointment
+        },
+        success: () => {
+            console.log('hahahahahah')
+        }
+    })
+}
 
-        $scope.deleteAppointment = (appointment) => {
+        $scope.deleteOpenAppointment = (appointment) => {
             console.log('asdasdasdasd;as;kdmas;kdmja;sj', appointment)
             $.ajax({
-                url: '/deleteAppointment',
+                url: '/deleteOpenAppointment',
                 method: 'DELETE',
                 dataType: 'json',
                 data: {
