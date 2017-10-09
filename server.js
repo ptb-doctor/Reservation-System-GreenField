@@ -6,6 +6,8 @@ var bodyParser = require('body-parser');
 var app = express();
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
+
+
     // var path = require('path');
 //schemas :
 var doctors = require('./Database/db').doctors;
@@ -50,20 +52,21 @@ app.get('/checkIsLoggedIn', (req, res) => {
 
 // client page 
 app.get('/', (req, res) => {
+    console.log('inside get/')
     if (!req.session.username) {
         res.status(200);
         res.sendFile(__dirname+'/FrontEnd/views/signup.html');
     }else{
-  res.status(200);
-  res.sendFile(__dirname+'/FrontEnd/index.html');
-}
+      res.status(200);
+      res.sendFile(__dirname+'/FrontEnd/index.html');
+    }
 })
 
 
 
 // get login page 
 app.get('/login', function(req, res) {
-    res.sendFile(__dirname+'/FrontEnd/views/login.html')
+    res.sendFile(__dirname+'/FrontEnd/views/login.html');
 })
 
 // Get all doctors
@@ -72,7 +75,7 @@ app.get('/getDoctors', (req, res) => {
     // it will display all the doctors wether they have an open reservation or not.
     doctors.find({}, (err, data) => {
         if (err) {
-            console.log(err);
+            console.log('err : ', err);
         }
         // console.log('------------> all users', data);
         res.send(data);
@@ -84,7 +87,7 @@ app.post('/getDoctorData', (req, res) => {
      // this request will be triggered when the user click on the doctor picture
       // in the - main.html - and it will find the doctor and return his data
     // console.log('********************>', req.body.doctorName);
-    doctors.findOne({
+    doctors.find({
         name: req.body.doctorName
     }, (err, data) => {
         if (err) {
@@ -100,7 +103,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
     // this request is triggered automatically when the doctor logs in to get
     // his resrvaed dates 
     // console.log('********************>', req.body.doctorName);
-    doctors.findOne({
+    doctors.find({
         name: req.session.username
     }, (err, data) => {
         /*data is obj like => { id , name , password , phone , major , open , image }*/
@@ -124,35 +127,40 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
 
 // Login page form
 app.post('/login', function (req, res) {
-    console.log('--------$$$$---->login', req.session)
     var username = req.body.username;
-    var password = req.body.password;
+    var password = ''+req.body.password;
+    console.log('--------$$$$---->login', req.session,' user & pass : ', username , ' / ' , password)
     // var salt = bcrypt.genSaltSync(10);
     // var hash = bcrypt.hashSync(password, salt);
-    doctors.findOne({
+    doctors.find({
         name: username
     }, function (err, doctor) {
         if (err) {
             return res.status(404).send();
         }
-        if (!doctor) {
-            patients.findOne({
-                name: username
-            }, (error , patient) => {
-                if (err) return res.status(404).send();
-                if (!patient) return res.redirect('/signup');
-                if (patient.password !== password) return res.status(404).send();
-                req.session.username = patient.username;
-                req.session.username = patient.password;
-                res.sendFile(__dirname+'/FrontEnd/index.html');
-            })
-            // return res.status(404).send();
+        if (doctor.length) {
+            if (doctor[0].password !== password) {
+                console.log('incorrect password  ', doctor[0]);
+                return res.sendFile(__dirname+'/FrontEnd/views/login.html');
+            }
+            // Create session
+            req.session.username = doctor[0].username;
+            req.session.username = doctor[0].password;
+            return res.sendFile(__dirname + '/FrontEnd/views/admin.html');
         }
-        if (doctor.password !== password) return res.status(404).send();
-        // Create session
-        req.session.username = doctor.username;
-        req.session.username = doctor.password;
-        res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
+        patients.find({
+            name: username
+        }, (error , patient) => {
+            if (err) return res.status(404).send();
+            if (!patient.length) return res.redirect('/signup');
+            if (patient[0].password !== password) {
+                console.log('incorrect password');
+                return res.sendFile(__dirname+'/FrontEnd/views/login.html');
+            }
+            req.session.username = patient[0].username;
+            req.session.username = patient[0].password;
+            res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
+        })
     })
 });
 
@@ -174,11 +182,21 @@ app.post('/signup', upload.any(), function(req, res) {
 // won't appeare, so I recommend another method
 
 //check if the username is already used  :
+
     console.log(req.body)
-     patients.find({name : req.body.username}, (error, patient)=> {
+    patients.find({name : req.body.username}, (error, patient)=> {
+        if (error) {
+            return res.send("error with finding patients names") ;
+        }
         doctors.find({name : req.body.username}, (err, doctor)=> {
-            console.log(doctor)
-            if (doctor.length!==0 || err || error || patient.length!==0) return res.send("error or user name is already taken") ;
+            if (err) {
+                return res.send("error with finding doctors names") ;
+            }
+            if (doctor.length || patient.length) {
+                console.log('doctor : ', doctor , 'patient : ', patient)
+                return res.send("user name is already taken") ;
+            }
+
             var addDoc = {
                 name: req.body.username,
                 password: req.body.password,
