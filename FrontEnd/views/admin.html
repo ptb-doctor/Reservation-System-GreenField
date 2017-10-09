@@ -1,6 +1,10 @@
 <div ng-controller="adminCtrl">
-		<div class="container well col-lg-8 col-lg-offset-2"  ng-init="loadAppointments()">
-
+		<div class="container well col-lg-8 col-lg-offset-2" ng-init="getDocInfo()">
+		<div>
+      <img ng-src={{docInfo.image}} alt="photo"> <h2>{{docInfo.name}}</h2>
+      <h2>{{docInfo.phone}}</h2>
+      <h2>{{docInfo.major}}</h2>
+    </div>
       <center>
 <form class="form-inline">
   <strong style="font-size: 20px; font-family:Open Sans; font-weight:bold; color:#555;">Add appointment:</strong>
@@ -30,5 +34,22 @@
               </div>
               </div>
             </ul>
+
+            <!-- ////////////////////// -->
+
+            <center>
+              <h2 style="font-size: 30px; font-family:Open Sans; font-weight:bold; color:#555;">Open appointments:</h2>
+            </center>
+            <ul>
+              <div ng-repeat="appointment in docInfo.open track by $index">
+                <div class="well" style="background-color: rgba(190,190,190,0.3);">
+               <li>
+                   <h4><b>Date:</b> {{appointment.date}}</h4>
+                   <h4><b>Time:</b> {{appointment.time}}</h4>
+               </li>
+               <button ng-click="deleteAppointment(appointment)" class="btn btn-danger">Delete</button>
+             </div>
+             </div>
+           </ul>
 	 </div>
 </div>
