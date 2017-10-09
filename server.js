@@ -177,6 +177,7 @@ app.post('/login', function (req, res) {
             }
             req.session.username = patient[0].username;
             req.session.username = patient[0].password;
+
             console.log('patient is signed in ......');
             return res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
         })
@@ -245,6 +246,7 @@ app.post('/patient', (req, res) => {
             return res.send("error with finding patients names") ;
         }
         doctors.find({name : req.body.username}, (err, doctor)=> {
+
             if (err) {
                 return res.send("error with finding doctors names") ;
             }
@@ -254,6 +256,7 @@ app.post('/patient', (req, res) => {
             }
             console.log('req.body : ', req.body)
             console.log('req.body : ', req.files)
+
             var addPatient = {
                 name: req.body.username,
                 password: req.body.password,
