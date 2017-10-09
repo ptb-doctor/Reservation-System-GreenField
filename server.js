@@ -159,7 +159,7 @@ app.post('/login', function (req, res) {
             }
             req.session.username = patient[0].username;
             req.session.username = patient[0].password;
-            res.sendFile(__dirname+'/FrontEnd/views/patientprofile.html');
+            res.render(__dirname+'/FrontEnd/views/patientprofile');
         })
     })
 });
@@ -221,12 +221,12 @@ app.post('/signup', upload.any(), function(req, res) {
 app.post('/patient', (req, res) => {
     patients.find({name : req.body.username}, (error, patient)=> {
         doctors.find({name : req.body.username}, (err, doctor)=> {
-            if (doctor || err || error || patient) return res.send("error or user name is already taken") ;
+            if (doctor.length || err || error || patient.length) return res.send("error or user name is already taken") ;
             var addPatient = {
                 name: req.body.username,
                 password: req.body.password,
                 phone: req.body.phoneNumber,
-                image: req.files[0].filename
+                image: req.body.myImage
             };
             var user = new patients(addPatient);
             user.save()
