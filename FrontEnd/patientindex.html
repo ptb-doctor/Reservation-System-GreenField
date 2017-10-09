@@ -16,27 +16,10 @@
 
     <!-- <link rel="stylesheet" type="text/css" href="main.css"> -->
   </head>
-  <!-- this index not working  -->
-  <body>   
-      <img src={{profile.image}}>
-      <h3>{{profile.name}}</h3>
-      <h3>{{profile.phone}}</h3>
-
-
-      
-
-       <ul>
-               <div ng-repeat="appointment in profile.appointment">
-                 <div class="well" style="background-color: rgba(190,190,190,0.3);">
-                <li>
-                    <h4><b>Time:</b> {{appointment.time}}</h4>
-                    <h4><b>Case:</b> {{appointment.case}}</h4>
-                    <h4><b>Recomindations:</b> {{appointment.recomendations}}</h4>
-                </li>
-                <button ng-click="" class="btn btn-danger">Delete</button>
-              </div>
-              </div>
-       </ul>
-       </div>
+  <body>
+  hiiu
+  <patientprofile ng-app='patient' />
+      <script src="Components/patientprofile.js"></script>
+      <!-- <script src="Components/patientprofile.js"></script> -->
   </body>
 </html>
