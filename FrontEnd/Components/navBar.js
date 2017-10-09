@@ -2,6 +2,8 @@ angular.module('app')
 .controller('navBar', ($scope, $http) => {
   $scope.isLoggedIn = false;
   $scope.showPro = false;
+  $scope.doctor=false
+
   $scope.checkIsLoggedIn = function() {
     console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
     // $http({
