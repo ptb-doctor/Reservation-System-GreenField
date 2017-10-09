@@ -50,13 +50,14 @@ app.get('/checkIsLoggedIn', (req, res) => {
 
 // client page 
 app.get('/', (req, res) => {
+    console.log('inside get/')
     if (!req.session.username) {
         res.status(200);
         res.sendFile(__dirname+'/FrontEnd/views/signup.html');
     }else{
-  res.status(200);
-  res.sendFile(__dirname+'/FrontEnd/index.html');
-}
+      res.status(200);
+      res.sendFile(__dirname+'/FrontEnd/index.html');
+    }
 })
 
 
@@ -72,7 +73,7 @@ app.get('/getDoctors', (req, res) => {
     // it will display all the doctors wether they have an open reservation or not.
     doctors.find({}, (err, data) => {
         if (err) {
-            console.log(err);
+            console.log('err : ', err);
         }
         // console.log('------------> all users', data);
         res.send(data);
@@ -174,11 +175,18 @@ app.post('/signup', upload.any(), function(req, res) {
 // won't appeare, so I recommend another method
 
 //check if the username is already used  :
+
     console.log(req.body)
-     patients.find({name : req.body.username}, (error, patient)=> {
+    patients.find({name : req.body.username}, (error, patient)=> {
+        if (error) {
+            return res.send("error with finding patients names") ;
+        }
         doctors.find({name : req.body.username}, (err, doctor)=> {
-            console.log(doctor)
-            if (doctor.length!==0 || err || error || patient.length!==0) return res.send("error or user name is already taken") ;
+            if (err) {
+                return res.send("error with finding doctors names") ;
+            }
+            if (doctor || patient) return res.send("error or user name is already taken") ;
+
             var addDoc = {
                 name: req.body.username,
                 password: req.body.password,
