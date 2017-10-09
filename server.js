@@ -146,7 +146,7 @@ app.post('/login', function (req, res) {
             // Create session
             req.session.username = doctor[0].username;
             req.session.username = doctor[0].password;
-            return res.sendFile(__dirname+'/FrontEnd/views/admin.html');
+            return res.redirect('./views/admin');
         }
         patients.find({
             name: username
