@@ -63,7 +63,7 @@ app.get('/checkIsLoggedIn', (req, res) => {
     // to check if a doctor is logged in in order to show or hide some 
     // elements in the top bar
   var checker = JSON.stringify(!!req.session.username);
-  console.log('checking isLoggedIn --------------->', !!req.session.username, checker);
+  console.log('checking isLoggedIn --------------->', req.session, checker);
   res.send(checker);
 });
 
@@ -176,8 +176,10 @@ app.post('/login', function (req, res) {
                 return res.redirect('/FrontEnd/views/login.html');
             }
             // Create session
-            req.session.username = doctor[0].username;
-            req.session.username = doctor[0].password;
+            req.session.username = doctor[0].name;
+            req.session.password = doctor[0].password;
+            console.log('--------doctor-------',doctor[0])
+            console.log('--------req.session-------',req.session)
             return res.redirect('/FrontEnd/index.html');
         }
         patients.find({
@@ -194,10 +196,10 @@ app.post('/login', function (req, res) {
                 return res.redirect('/FrontEnd/views/login.html');
             }
             req.session.username = patient[0].username;
-            req.session.username = patient[0].password;
+            req.session.password = patient[0].password;
 
             console.log('patient is signed in ......');
-            return res.redirect('/FrontEnd/views/patientprofile.html');
+            return res.redirect('/FrontEnd/index.html');
         })
     })
 });
@@ -207,7 +209,7 @@ app.get('/logout', function(req, res) {
     // it will be triggered by the log out button 
     req.session.username = null;
     req.session.password = null;
-    console.log('->>>>>>>>>>>>>', req.session);
+    console.log('get logout>>>>>>>>>>>>>', req.session);
     res.redirect('/login');
 });
 
@@ -303,7 +305,7 @@ app.get('/signup', function(req, res) {
 app.put('/addAppointments', function(req, res) {
     // this request will be triggered by - admin.html - 
     // and will store the new appointment in the db.
-    console.log('-------- addappointments', req.body, '*******', req.session.username)
+    console.log('-------- addappointments', req.body, '*******', req.session)
     doctors.update({
         name: req.session.username
     }, {
@@ -312,29 +314,31 @@ app.put('/addAppointments', function(req, res) {
         }
     }, function(err, updateUser) {
         if (err) {
-            console.log('error')
+            console.log('error');
         } else {
-            res.send(updateUser)
+            console.log('doctor new opens : ' , updateUser);
+            res.send(updateUser);
         }
     })
 });
 
 //get patient profile : 
 app.get('/patientprofile', (req , res) => {
-    if (!req.session.username) {
-        console.log('patient profile redirecting to login');
-        return res.redirect('/FrontEnd/views/login.html');
-    } else {   
+    // if (!req.session.username) {
+    //     console.log('patient profile redirecting to login');
+    //     return res.redirect('/FrontEnd/views/login.html');
+    // } else {   
         console.log('patient profile for : ' , req.session.username);
         //get paient data from db : 
         patients.find({name : req.session.username}, (err, data) => {
             if (err) return res.send({});
             appointments.find({patient : data.id}, (error , appointments)=> {
-                data.appointments = appointments
-                return res.send(data);
+                console.log(data)
+                data[0].appointments = appointments
+                return res.send(data[0]);
             })
         })
-    }
+    // }
 })
 
 
@@ -386,32 +390,12 @@ app.put("/reservedappointments", function(req, res) {
 
  // delete reserved appoinment 
 app.delete('/deleteAppointment' , function (req , res) {
-	/* body... */
-
     // this one doesn't work 
-    console.log('***********>>', req.body, req.session.username)
-    var theAppointment = {
-        availableAppointments: req.body.reservedAppointment.availableAppointments,
-        patientName: req.body.reservedAppointment.patientName,
-        patientPhone: req.body.reservedAppointment.patientPhone
-    }
-    req.body.reservedAppointment = theAppointment;
-    console.log('xxxxxxxxxxxxx>', req.body.reservedAppointment)
-	 db.update({
-        username: req.session.username
-    }, {
-        $pull: {
-            reservedAppointments: req.body.reservedAppointment
-        }
-    }, function(err, updateUser) {
-        if (err) {
-            console.log(err)
-        } else {
-
-            console.log('pull successfully', updateUser)
-            console.log(updateUser)
-        }
-    });
+    console.log('deleteAppointment ======================>>', req.body.reservedAppointment, req.session.username)
+    appointments.remove({id : req.body.reservedAppointment.id}, function(err, data) {
+        if (err) {return console.log('error removing')}
+        console.log('data removed : ' ,data )
+    })
 })
 
 

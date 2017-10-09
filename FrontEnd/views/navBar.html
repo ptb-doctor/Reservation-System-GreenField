@@ -18,5 +18,6 @@
 </nav>
 <br><br><br>
 <main ng-hide = "showPro"></main>
-<admin ng-show="showPro"></admin>
+<admin ng-show="showPro && doctor"></admin>
+<patientprofile ng-show="showPro && !doctor"></patientprofile>
 </span>
