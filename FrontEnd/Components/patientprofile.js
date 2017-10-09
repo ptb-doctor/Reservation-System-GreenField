@@ -1,18 +1,22 @@
-window.onload = function() {
-console.log('hii')
-var profile;
-$.ajax({
-                url: '/patientprofile',
+angular.module('app')
+.component('patientprofile', {
+        controller: "patientprofileCtrl",
+        templateUrl: `./views/patientprofile.html`
+ })
+.controller('patientprofileCtrl', function($scope, $http) {
+    console.log('hiiii')
+    //$scope.profile;
+    $.ajax({
+                url:'/patientprofile',
                 dataType: 'json',
                 async: false,
                 success: function(data) {
-                    console.log(data)
-                    document.getElementById("image").src=data[0].image;
-                    document.getElementById("name").textContent=data[0].name;
-                    document.getElementById("phone").textContent=data[0].phone;
-
+                   console.log(data)
+                  // $scope.profile=data 
                 }
-        });
-}
-       //when the document is finished loading, replace everything
-       //between the <a ...> </a> tags with the value of splitText
+                ,error:function(){
+                    console.log('errrrrrrrror')
+                }
+            });
+    console.log('lllll')
+})
