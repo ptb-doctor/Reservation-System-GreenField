@@ -3,13 +3,7 @@ var mongoose=require('mongoose');
 var Schema=mongoose.Schema;
 
 //database name is "admins".
-
-mongoose.connect('mongodb://asynco:1234@ds113445.mlab.com:13445/asynco',function(err,data){
-	if(err){
-		console.log(err)
-	}
-	console.log('connect with db');
-});
+//mongodb://asynco:1234@ds113445.mlab.com:13445/asynco
 
 var doctors = new Schema({
 	id : Number ,
@@ -59,7 +53,7 @@ var patients = new Schema({
 
 var appointments = new Schema({
 	id : Number ,
-	id_doctor: {
+	doctor: {
 		type: Number,
 		required: true
 	},
@@ -84,3 +78,12 @@ exports.doctors = mongoose.model ('doctors', doctors);
 exports.patients = mongoose.model ('patients', patients);
 exports.appointments = mongoose.model ('appointments', appointments);
 
+// mongoose.connect('mongodb://localhost/ptb',function(err,data){
+// 	if(err){
+// 		console.log(err)
+// 	}
+// 	console.log('connect with db');
+// });
+mongoose.connect('mongodb://localhost/ptb', { useMongoClient: true })
+    .then(() => console.log('connect with db'))
+    .catch(err => console.error(err));
