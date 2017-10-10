@@ -57,6 +57,12 @@ app.use(session({
 // static files inside FrontEnd folder
 app.use(express.static(__dirname ));
 
+app.get('/logOut', function(req,res){
+    req.session.destroy(function(err) {
+      err ? console.log(err) : console.log('deleted')
+      res.send()
+      })
+})
 // check if doctor loggin
 app.get('/checkIsLoggedIn', (req, res) => {
     // this one will start automaticlly with the navBar component - navBar.html line:1 -
