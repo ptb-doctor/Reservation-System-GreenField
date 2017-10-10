@@ -62,7 +62,7 @@ var appointments = new Schema({
 		required: true
 	},
  	time:{
- 		type: Date,
+ 		type: Array,
  		required:true
  	},
  	recomendations:{
@@ -70,7 +70,7 @@ var appointments = new Schema({
 	},
  	case:{
 		type: String
-	},
+	}
 });
 
 
