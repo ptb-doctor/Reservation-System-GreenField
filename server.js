@@ -119,7 +119,7 @@ app.get('/getDoctors', (req, res) => {
     // it will display all the doctors wether they have an open reservation or not.
     doctors.find({}, (err, data) => {
         if (err) {
-            console.log('err : ', err);http://localhost:2036/FrontEnd/index.html#/docprofile
+            console.log('err : ', err);//http://localhost:2036/FrontEnd/index.html#/docprofile
             res.send([])
             return ;
         }
@@ -196,7 +196,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
         }
         else {
             appointments.find({
-                doctor : data[0].id
+                doctor : data[0].name
             }, (error, info) => {
                 if (err) return console.log(err);
                 //info is array of objects , each object is an appointment
@@ -392,7 +392,7 @@ app.get('/patientprofile', (req , res) => {
                 console.log('errror')
                 return res.send({})
             };
-            appointments.find({patient : data[0]._id}, (error , app)=> {
+            appointments.find({patient : data[0].name}, (error , app)=> {
 
                 if (error || data.length === 0) {
                     console.log('error || data.length === 0', appointments)
@@ -431,27 +431,23 @@ app.put("/reservedappointments", function(req, res) {
     // var str = req.body.time.split(' ');
     // var time = {time : str[0] , date : str[1]}
     deleter (req.body.doctor.id , req.body.time , ()=> {
-        patients.find({name: req.session.username}, (err, patient) => {
-            console.log('patient:', patient[0]._id , req.body.doctor._id)
-            var obj = new appointments({
-                            doctor: req.body.doctor._id ,
-                            patient: patient[0]._id,
-                            time: req.body.time ,
-                            recomendations: '' ,
-                            case: req.body.Case
-                        })
-            obj.save()
-                .then(()=>{
-                    console.log(obj , ' saved to db');
-                })
-                .catch((err)=> {
-                    console.log('error saving : ', obj);
-                    console.log('error saving : ', err);
-                })
-
+        console.log('patient:', req.session.username , req.body.doctor.name)
+        var obj = new appointments({
+                        doctor: req.body.doctor.name,
+                        patient: req.session.username,
+                        time: req.body.time ,
+                        recomendations: '' ,
+                        case: req.body.Case
+                    })
+        obj.save()
+            .then(()=>{
+                console.log(obj , ' saved to db');
+            })
+            .catch((err)=> {
+                console.log('error saving : ', obj);
+                console.log('error saving : ', err);
+            })
         })
-
-    })
 })
  
 
@@ -476,11 +472,11 @@ app.delete('/deleteAppointment' , function (req , res) {
  // delete open appoinment 
 app.delete('/deleteOpenAppointment' , function (req , res) {
     //i will recieve appointment object like the schema 
-    console.log('deleteAppointment ======================>>', req.body , 'for the doctor', req.session.username)
+    console.log('deleteAppointment ======================>>', req.body.reservedAppointment , 'for the doctor', req.session.username)
     console.log('req.body should be str ...');
     doctors.find({name : req.session.username} , (err, result)=> {
-        if (err) return consolr.log('error finding doc : ', req.session.username)
-        deleter (result[0]._id, req.body.time + ' ' + req.body.date , ()=>{
+        if (err) return console.log('error finding doc : ', req.session.username)
+        deleter (result[0]._id, req.body.reservedAppointment.time + ' ' + req.body.reservedAppointment.date , ()=>{
             res.send();
         })
     });
@@ -489,7 +485,7 @@ app.delete('/deleteOpenAppointment' , function (req , res) {
 
 
 function deleter (id , timeToDelete , cb) {
-
+    console.log('deleter : ' , id , timeToDelete);
     doctors.update({
         id : id
     }, {
@@ -497,7 +493,7 @@ function deleter (id , timeToDelete , cb) {
             open : timeToDelete
         }
     }, (err, updated) => {
-        if (err) console.log('err deleteing open appointment', req.body);
+        if (err) console.log('err deleteing open appointment', err);
         else {
             console.log('deleted : ' , updated)
             cb();
@@ -506,7 +502,7 @@ function deleter (id , timeToDelete , cb) {
 }
 
 function changeDate (str) {
-    console.log(str , ' : this is str at changeDate ')
+    //  console.log(str , ' : this is str at changeDate ')
     var arr = str.split(' ');
     return {
         time : arr[0],
