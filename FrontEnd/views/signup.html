@@ -20,13 +20,13 @@
               <h3 style="text-align: center;"> Hello Doctor </h3>
               <h1><small style="font-family:Open Sans; font-weight:bold; color:#555;">Please Fill your information here </small></h1>
             </div>
-            <form action="/signup" method="post" class="form-horizontal" enctype="multipart/form-data">
+           <!--  <form action="/signup" method="post" class="form-horizontal" enctype="multipart/form-data"> -->
               <div class="form-group">
                 <!-- <label for="Username" class="control-label col-md-3" >User Name</label> -->
                 <div class=" col-md-6 col-lg-offset-3">
                   <div class="input-group">
                     <div class="input-group-addon"><div class="glyphicon glyphicon-user"></div></div>
-                    <input type="text" ng-model="username" name="username" placeholder="User Name" class="form-control" required="required">
+                    <input id='name' type="text" ng-model="username" name="username" placeholder="User Name" class="form-control" required="required">
                   </div>
                 </div>
               </div>
@@ -36,7 +36,7 @@
                 <div class="col-md-6 col-lg-offset-3">
                   <div class="input-group">
                     <div class="input-group-addon"><div class="glyphicon glyphicon-lock"></div></div>
-                    <input type="password" ng-model="password" name="password" placeholder="Password" class="form-control" required="required">
+                    <input id='password' type="password" ng-model="password" name="password" placeholder="Password" class="form-control" required="required">
 
                   </div>
                 </div>
@@ -46,7 +46,7 @@
                 <div class="col-md-6 col-lg-offset-3">
                   <div class="input-group">
                     <div class="input-group-addon"><div class="glyphicon glyphicon-earphone"></div></div>
-                    <input type="Number" ng-name="phoneNumber" name="phoneNumber" placeholder="Phone Number." class="form-control" required="required">
+                    <input id='phone' type="Number" ng-name="phoneNumber" name="phoneNumber" placeholder="Phone Number." class="form-control" required="required">
 
                   </div>
                 </div>
@@ -56,8 +56,8 @@
                 <div class="col-md-6 col-lg-offset-3">
                   <div class="input-group">
                     <div class="input-group-addon"><div class="glyphicon glyphicon-asterisk"></div></div>
-                    <input type="text" ng-name="specilization" name="specilization" placeholder="Your specilization here" class="form-control" required="required">
-                    <input type="file" name="myImage"  />
+                    <input id='specilization' type="text" ng-name="specilization" name="specilization" placeholder="Your specilization here" class="form-control" required="required">
+                    <input id='image' type="file" name="myImage"  />
                   </div>
                 </div>
               </div>
@@ -66,10 +66,10 @@
               <!-- last clone -->
               <div class="form-group">
                 <div class="col-md-6 col-md-offset-3 text-center">
-                  <button type="submit" class="btn btn-danger btn-block" data-dismiss="modal">Submit</button>
+                  <button type="submit" class="btn btn-danger btn-block" ng-click='signup()' data-dismiss="modal">Submit</button>
                 </div>
               </div>
-            </form>
+       <!--      </form> -->
           </div>
         </div>
       </div>
@@ -89,13 +89,13 @@
               <h3>Hello Customer</h3>
               <h1><small style="font-family:Open Sans; font-weight:bold; color:#555;">Please Fill your information here </small></h1>
             </div>
-            <form action="/patient" method="post" class="form-horizontal">
+           <!--  <form action="/patient" method="post" class="form-horizontal"> -->
               <div class="form-group">
                 <!-- <label for="Username" class="control-label col-md-3" >User Name</label> -->
                 <div class=" col-md-6 col-lg-offset-3">
                   <div class="input-group">
                     <div class="input-group-addon"><div class="glyphicon glyphicon-user"></div></div>
-                    <input type="text" ng-model="username" name="username" placeholder="User Name" class="form-control" required="required">
+                    <input id='name2' type="text" ng-model="username" name="username" placeholder="User Name" class="form-control" required="required">
                   </div>
                 </div>
               </div>
@@ -105,7 +105,7 @@
                 <div class="col-md-6 col-lg-offset-3">
                   <div class="input-group">
                     <div class="input-group-addon"><div class="glyphicon glyphicon-lock"></div></div>
-                    <input type="password" ng-model="password" name="password" placeholder="Password" class="form-control" required="required">
+                    <input id='password2' type="password" ng-model="password" name="password" placeholder="Password" class="form-control" required="required">
 
                   </div>
                 </div>
@@ -115,7 +115,7 @@
                 <div class="col-md-6 col-lg-offset-3">
                   <div class="input-group">
                     <div class="input-group-addon"><div class="glyphicon glyphicon-earphone"></div></div>
-                    <input type="Number" ng-name="phoneNumber" name="phoneNumber" placeholder="Phone Number." class="form-control" required="required">
+                    <input id='phone2' type="Number" ng-name="phoneNumber" name="phoneNumber" placeholder="Phone Number." class="form-control" required="required">
 
                   </div>
                 </div>
@@ -125,7 +125,7 @@
                 <div class="col-md-6 col-lg-offset-3">
                   <div class="input-group">
                     <div class="input-group-addon"><div class="glyphicon glyphicon-asterisk"></div></div>
-                    <input type="file" name="myImage"  />
+                    <input id='image2' type="file" name="myImage"  />
                   </div>
                 </div>
               </div>
@@ -134,10 +134,10 @@
               <!-- last clone -->
               <div class="form-group">
                 <div class="col-md-6 col-md-offset-3 text-center">
-                  <button type="submit" class="btn btn-danger btn-block" data-dismiss="modal">Submit</button>
+                  <button type="submit" ng-click='patient()' class="btn btn-danger btn-block" data-dismiss="modal">Submit</button>
                 </div>
               </div>
-            </form>
+            <!-- </form> -->
           </div>
         </div>
       </div>
