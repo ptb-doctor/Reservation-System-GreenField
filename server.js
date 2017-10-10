@@ -428,7 +428,7 @@ app.get('/patientprofile', (req , res) => {
 app.put("/reservedappointments", function(req, res) {
     // this request is triggered by the submit button by when the user 
     // chooses an appointment to reserve, 
-    console.log('req.body at reservedappointments------->', req.body);
+    console.log('req.body at reservedappointments------->', req.session);
     // var str = req.body.time.split(' ');
     // var time = {time : str[0] , date : str[1]}
     deleter (req.body.doctor.name , req.body.time , ()=> {
@@ -455,17 +455,17 @@ app.put("/reservedappointments", function(req, res) {
  // delete reserved appoinment 
 app.delete('/deleteAppointment' , function (req , res) {
     //i will recieve appointment object like the schema 
-    console.log('deleteAppointment ======================>>', req.body.reservedAppointment, req.session.username)
-    appointments.remove({ id :req.body.reservedAppointment._id }, function(err, data) {
+    console.log('deleteAppointment ======================>>', req.body, req.session.username)
+    appointments.remove({doctor : req.session.username}, function(err, data) {
         if (err) {
-            res.status(401).send();
-            return console.log('error removing reserved appoinment', err.message);
+            res.send();
+            return console.log('error removing reserved appoinment');
         }
         if (data.nModified === 0) {
-            res.status(401).send();
+            res.send();
             return console.log('data weren\'t deleted');
         }
-        console.log('data removed : ' , data );
+        console.log('data  removed ');
         res.send();
     })
 })
@@ -475,12 +475,9 @@ app.delete('/deleteAppointment' , function (req , res) {
 app.delete('/deleteOpenAppointment' , function (req , res) {
     //i will recieve appointment object like the schema 
     console.log('deleteAppointment ======================>>', req.body.reservedAppointment , 'for the doctor', req.session.username)
-    console.log('req.body should be str ...');
-    if (err) return console.log('error finding doc : ', req.session.username)
-    deleter (req.session.username, req.body.reservedAppointment.time + ' ' + req.body.reservedAppointment.date , ()=>{
+    deleter (req.session.username  , req.body.reservedAppointment.time + ' ' + req.body.reservedAppointment.date , ()=>{
         res.send();
     })
-
 })
 
 
