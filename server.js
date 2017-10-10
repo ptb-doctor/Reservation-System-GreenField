@@ -201,7 +201,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
                 if (err) return console.log(err);
                 //info is array of objects , each object is an appointment
                 //{id , doctor , patient , time , recomendations , case}
-                consoloe.log(data.length ,' appointments for the doc : ', req.session.username)
+                console.log(data.length ,' appointments for the doc : ', req.session.username)
                 res.send(info);
             })
         }       
