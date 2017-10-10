@@ -392,7 +392,7 @@ app.get('/patientprofile', (req , res) => {
                 console.log('errror')
                 return res.send({})
             };
-            appointments.find({patient : data.id}, (error , app)=> {
+            appointments.find({patient : data[0]._id}, (error , app)=> {
 
                 if (error || data.length === 0) {
                     console.log('error || data.length === 0', appointments)
