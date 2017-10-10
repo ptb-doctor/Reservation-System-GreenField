@@ -70,7 +70,7 @@ app.get('/checkIsLoggedIn', (req, res) => {
         } else {
             patients.find({name : req.session.username}, (error , patient)=>{
                 if (patient.length > 0) {
-                    return res.search('patient');
+                    return res.send('patient');
                 }
                 return res.send('false');
             })
@@ -210,7 +210,7 @@ app.post('/login', function (req, res) {
                 console.log('incorrect password');
                 return res.redirect('/FrontEnd/views/login.html');
             }
-            req.session.username = patient[0].username;
+            req.session.username = patient[0].name;
             req.session.password = patient[0].password;
 
             console.log('patient is signed in ......');
@@ -346,9 +346,16 @@ app.get('/patientprofile', (req , res) => {
         console.log('patient profile for : ' , req.session.username);
         //get paient data from db : 
         patients.find({name : req.session.username}, (err, data) => {
-            if (err) return res.send({});
+            if (err) {
+                console.log('errror')
+                return res.send({})
+            };
             appointments.find({patient : data.id}, (error , appointments)=> {
-                if (error || appointments.length === 0) return res.send('whaaaat??')
+
+                if (error || data.length === 0) {
+                    console.log('error || data.length === 0', appointments)
+                    return res.send({a:'whaaaat??'})
+                }
                 console.log(data)
                 data[0].appointments = appointments
                 return res.send(data[0]);
