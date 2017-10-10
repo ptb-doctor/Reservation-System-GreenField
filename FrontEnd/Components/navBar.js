@@ -20,8 +20,10 @@ angular.module('app')
       success: function (data){
         if(data=='doctor')
             $scope.doctor=true;
+          $scope.isLoggedIn = true;
         if(data=='patient')
             $scope.doctor=false;
+          $scope.isLoggedIn = true;
       }
     })
   }
