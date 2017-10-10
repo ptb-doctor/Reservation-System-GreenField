@@ -85,35 +85,27 @@ app.get('/checkIsLoggedIn', (req, res) => {
 
 // client page 
 app.get('/', (req, res) => {
-    console.log('inside get/')
-    if (!req.session.username) {
-        console.log('idon\'t  have a session');
-        //res.status(200);
-        return res.redirect('/FrontEnd/views/login.html');
-    } else {
-      console.log('i have a session');
-      //res.status(200);
+    console.log('inside get////////');
       res.redirect('/FrontEnd/index.html');
-    }
 })
 
-app.get('/index', (req, res) => {
-    console.log('inside get/')
-    if (!req.session.username) {
-        console.log('idon\'t  have a session');
-        //res.status(200);
-        return res.redirect('/FrontEnd/views/login.html');
-    } else {
-      console.log('i have a session');
-      //res.status(200);
-      res.redirect('/FrontEnd/index.html');
-    }
-})
+// app.get('/index', (req, res) => {
+//     console.log('inside get/')
+//     if (!req.session.username) {
+//         console.log('idon\'t  have a session');
+//         //res.status(200);
+//         return res.redirect('/FrontEnd/views/login.html');
+//     } else {
+//       console.log('i have a session');
+//       //res.status(200);
+//       res.redirect('/FrontEnd/index.html');
+//     }
+// })
 
 // get login page 
-app.get('/login', function(req, res) {
-    res.redirect('/FrontEnd/views/login.html');
-})
+// app.get('/login', function(req, res) {
+//     res.redirect('/FrontEnd/views/login.html');
+// })
 
 // Get all doctors
 app.get('/getDoctors', (req, res) => {
@@ -167,8 +159,9 @@ app.get('/docInfo', (req, res) => {
     doctors.find({
         name: req.session.username
     }, (err, data) => {
-        if (err) {
-            console.log(err);
+        if (err || data.length === 0) {
+            console.log(err , data);
+            return res.send({})
         }
         data[0].open = data[0].open.map((app)=> {
             return changeDate(app);
@@ -259,7 +252,8 @@ app.get('/logout', function(req, res) {
     req.session.username = null;
     req.session.password = null;
     console.log('get logout>>>>>>>>>>>>>', req.session);
-    res.redirect('/login');
+    // res.redirect('/login');
+    res.send();
 });
 
 // Sign Up  form POST 
@@ -298,7 +292,8 @@ app.post('/signup', upload.any(), function(req, res) {
             var user = new doctors(addDoc);
             user.save()
                 .then(item => {
-                    res.redirect('/FrontEnd/views/login.html');
+                    // res.redirect('/FrontEnd/views/login.html');
+                    res.send();
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -335,7 +330,8 @@ app.post('/patient', (req, res) => {
             var user = new patients(addPatient);
             user.save()
                 .then(item => {
-                    res.redirect('/FrontEnd/views/login.html');
+                    //res.redirect('/FrontEnd/views/login.html');
+                    res.send();
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -345,10 +341,9 @@ app.post('/patient', (req, res) => {
 });
 
 // Sign Up GET
-app.get('/signup', function(req, res) {
-    /* body... */
-    res.redirect('/FrontEnd/views/signup.html')
-});
+// app.get('/signup', function(req, res) {
+//     res.redirect('/FrontEnd/views/signup.html')
+// });
 
 // Add an appointment to doctor 
 app.put('/addAppointments', function(req, res) {
@@ -417,15 +412,15 @@ app.get('/patientprofile', (req , res) => {
 app.put("/reservedappointments", function(req, res) {
     // this request is triggered by the submit button by when the user 
     // chooses an appointment to reserve, 
-    console.log('req.body at reservedappointments------->', req.body.session);
+    console.log('req.body at reservedappointments------->', req.session);
     // var str = req.body.time.split(' ');
     // var time = {time : str[0] , date : str[1]}
     deleter (req.body.doctor.id , req.body.time , ()=> {
         patients.find({name: req.session.username}, (err, patient) => {
-            console.log('patient:', patient)
+            console.log('patient:', patient[0]._id , req.body.doctor._id)
             var obj = new appointments({
                             doctor: req.body.doctor._id ,
-                            patient: patient._id,
+                            patient: patient[0]._id,
                             time: req.body.time ,
                             recomendations: '' ,
                             case: req.body.Case
@@ -434,8 +429,9 @@ app.put("/reservedappointments", function(req, res) {
                 .then(()=>{
                     console.log(obj , ' saved to db');
                 })
-                .catch(()=> {
+                .catch((err)=> {
                     console.log('error saving : ', obj);
+                    console.log('error saving : ', err);
                 })
 
         })

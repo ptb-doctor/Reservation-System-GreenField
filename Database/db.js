@@ -54,11 +54,11 @@ var patients = new Schema({
 var appointments = new Schema({
 	id : Number ,
 	doctor: {
-		type: Number,
+		type: String,
 		required: true
 	},
  	patient: {
-		type: Number,
+		type: String,
 		required: true
 	},
  	time:{
