@@ -11,9 +11,9 @@
     <ul class="nav navbar-nav navbar-right">
       <li ng-if="!isLoggedIn"><a href="#/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
       <li ng-if="!isLoggedIn"><a href="#/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      <li > <a href="#/docprofile" ><span class="glyphicon glyphicon-log-in"></span> Profile doc</a></li>
-      <li > <a href="#/patientprofile" ><span class="glyphicon glyphicon-log-in"></span> Profile patient</a></li>
-      <li ng-if="isLoggedIn"><a href="#/login"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+      <li ng-show="isLoggedIn && doctor" > <a href="#/docprofile" ><span class="glyphicon glyphicon-log-in"></span> Profile</a></li>
+      <li ng-show="isLoggedIn && !doctor"> <a href="#/patientprofile" ><span class="glyphicon glyphicon-log-in"></span> Profile</a></li>
+      <li ng-if="isLoggedIn"><a href="#/login" ng-click="logOut()"><span class="glyphicon glyphicon-log-out" ></span> Logout</a></li>
     </ul>
   </div>
 </nav>

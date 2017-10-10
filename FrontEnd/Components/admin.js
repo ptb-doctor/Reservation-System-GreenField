@@ -59,15 +59,19 @@ $scope.getDocInfo = function(){
        }
    })
 }
+$scope.init = function(){
+    $scope.getDocInfo()
+    $scope.loadAppointments()
+}
 
 $scope.recommendation = function(appointment){
     var letter = $("#recommendation").val()
     $.ajax({
-        url: '/recommendation',
+        url: '/recomendation',
         method: 'POST',
         dataType: 'json',
         data: {
-            recommendation: letter,
+            recomendation: letter,
             appointment: appointment
         },
         success: () => {
