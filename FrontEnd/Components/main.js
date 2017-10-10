@@ -38,19 +38,19 @@ angular.module('app')
 //it's for submit the paitent information and reserved appointment  
     $scope.reserveAppointment =function (time){
       console.log('1111111111111111', $scope.timeA)
-      var petientName= $("#pName").val();
-      var petientPhone= $("#pPhon").val();
+      var Case= $("#pcase").val();
+     // var petientPhone= $("#pPhon").val();
+     console.log('doctor------',$scope.currentDoctor[0])
+     console.log('time------',$scope.timeA)
+     console.log('case------',Case)
       $.ajax({
         url:'/reservedappointments',
         method:'PUT',
         dataType:'json',
         data:{
-          username: $scope.currentDoctor.username,
-          reservedAppointment:{
-            patientName: petientName,
-            patientPhone: petientPhone,
-            availableAppointments: $scope.timeA
-          }
+          doctor: $scope.currentDoctor[0],
+          time:$scope.timeA,
+          Case:Case
         },
         success:function(){
          console.log('------------> yaaaaaaaaaaaaaaaaay');
