@@ -49,7 +49,7 @@ $scope.loadAppointments = function() {
 $scope.getDocInfo = function(){
     console.log("getting doctor")
     $.ajax({
-        url: '/getDocInfo',
+        url: '/docInfo',
         method: 'GET',
         dataType: 'json',
         async: false,
