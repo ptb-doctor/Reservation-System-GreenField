@@ -113,7 +113,13 @@ app.get('/getDoctors', (req, res) => {
     // it will display all the doctors wether they have an open reservation or not.
     doctors.find({}, (err, data) => {
         if (err) {
-            console.log('err : ', err);
+            console.log('err : ', err);http://localhost:2036/FrontEnd/index.html#/docprofile
+            res.send([])
+            return ;
+        }
+        if(data.length===0){
+            res.send([])
+            return console.log('empty')
         }
         // console.log('------------> all users', data);
         data = data.map((doc)=> {
@@ -292,8 +298,8 @@ app.post('/signup', upload.any(), function(req, res) {
             var user = new doctors(addDoc);
             user.save()
                 .then(item => {
-                    // res.redirect('/FrontEnd/views/login.html');
-                    res.send();
+                     res.redirect('/FrontEnd/index.html#/login');
+                    //res.send();
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -319,7 +325,7 @@ app.post('/patient', (req, res) => {
                 return res.send("user name is already taken") ;
             }
             console.log('req.body : ', req.body)
-            console.log('req.body : ', req.files)
+            //console.log('req.body : ', req.files)
 
             var addPatient = {
                 name: req.body.username,
@@ -330,8 +336,8 @@ app.post('/patient', (req, res) => {
             var user = new patients(addPatient);
             user.save()
                 .then(item => {
-                    //res.redirect('/FrontEnd/views/login.html');
-                    res.send();
+                    res.redirect('/FrontEnd/index.html#/login');
+                   // res.send();
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
