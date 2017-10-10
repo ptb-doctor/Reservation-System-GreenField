@@ -227,7 +227,7 @@ app.post('/login', function (req, res) {
             console.log (username , ' is a doctor !!');
             if (doctor[0].password !== password) {
                 console.log('incorrect password  ', doctor[0]);
-                return res.redirect('/FrontEnd/views/login.html');
+                return res.redirect('/FrontEnd/index.html');
             }
             // Create session
             req.session.username = doctor[0].name;
@@ -242,12 +242,12 @@ app.post('/login', function (req, res) {
             if (err) return res.status(404).send();
             if (!patient.length) {
                 console.log('not found in db !!');
-                return res.redirect('/FrontEnd/views/login.html');
+                return res.redirect('/FrontEnd/index.html');
             }
             console.log (username , ' is a patient !!');
             if (patient[0].password !== password) {
                 console.log('incorrect password');
-                return res.redirect('/FrontEnd/views/login.html');
+                return res.redirect('/FrontEnd/index.html');
             }
             req.session.username = patient[0].name;
             req.session.password = patient[0].password;
@@ -456,7 +456,7 @@ app.put("/reservedappointments", function(req, res) {
 app.delete('/deleteAppointment' , function (req , res) {
     //i will recieve appointment object like the schema 
     console.log('deleteAppointment ======================>>', req.body, req.session.username)
-    appointments.remove({doctor : req.session.username}, function(err, data) {
+    appointments.remove({time : req.body.reservedAppointment.time}, function(err, data) {
         if (err) {
             res.send();
             return console.log('error removing reserved appoinment');
@@ -511,15 +511,14 @@ function changeDate (str) {
 app.post('/recomendation', (req,res)=>{
     console.log('recomendation : ', req.body.recomendation , ' from the doctor : ' , req.session.username );
     console.log('the appointment : ', req.body.appointment);
-    // doctors.find({ doctor : req.session.username },(err,data)=>{
-    //     if(err)return console.log('err');
-    //     if(data.length === 0)return console.log('the array is empty');
-
-        appointments.update({ id : req.body.appointment.id }, { $set: { recomendations: req.body.recomendation }},{ multi: false },(error,result)=> {
+    appointments.update({ time : req.body.appointment.time }, { $set: { recomendations: req.body.recomendation }},{ multi: false },(error,result)=> {
+        if (error) {
             res.send();
-        })
-    // })
-    
+            return console.log(error.message);
+        }
+        console.log(result)
+        res.send();
+    })    
 })
 
 //************************************
