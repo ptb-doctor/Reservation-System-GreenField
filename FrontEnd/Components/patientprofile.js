@@ -11,6 +11,7 @@ angular.module('app')
                 dataType: 'json',
                 async: false,
                 success: function(data) {
+                   console.log('hwwwwwww')
                    console.log(data)
                    $scope.profile=data 
                 }

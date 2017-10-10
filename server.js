@@ -297,15 +297,16 @@ app.post('/signup', upload.any(), function(req, res) {
                 password: req.body.password,
                 phone: req.body.phoneNumber,
                 major: req.body.specilization,
-                image: req.files[0].filename
+                image: req.body.image
             };
             console.log('req.body : ', req.body)
             console.log('req.body : ', req.files)
             var user = new doctors(addDoc);
             user.save()
                 .then(item => {
-                     res.redirect('/FrontEnd/index.html#/login');
-                    //res.send();
+                    console.log('wwwwww')
+                    // res.redirect('/FrontEnd/index.html');
+                    res.send();
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
