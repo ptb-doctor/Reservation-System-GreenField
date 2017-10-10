@@ -6,6 +6,9 @@ var bodyParser = require('body-parser');
 var app = express();
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
+
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({limit: '5mb'}));
 // Add headers
 app.use(function (req, res, next) {
 
@@ -57,12 +60,6 @@ app.use(session({
 // static files inside FrontEnd folder
 app.use(express.static(__dirname ));
 
-app.get('/logOut', function(req,res){
-    req.session.destroy(function(err) {
-      err ? console.log(err) : console.log('deleted')
-      res.send()
-      })
-})
 // check if doctor loggin
 app.get('/checkIsLoggedIn', (req, res) => {
     // this one will start automaticlly with the navBar component - navBar.html line:1 -
@@ -201,7 +198,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
                 if (err) return console.log(err);
                 //info is array of objects , each object is an appointment
                 //{id , doctor , patient , time , recomendations , case}
-                consoloe.log(data.length ,' appointments for the doc : ', req.session.username)
+                console.log(data.length ,' appointments for the doc : ', req.session.username)
                 res.send(info);
             })
         }       
@@ -343,8 +340,8 @@ app.post('/patient', (req, res) => {
             var user = new patients(addPatient);
             user.save()
                 .then(item => {
-                    res.redirect('/FrontEnd/index.html#/login');
-                   // res.send();
+                    //res.redirect('/FrontEnd/index.html#/login');
+                    res.send();
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -393,18 +390,16 @@ app.get('/patientprofile', (req , res) => {
                 console.log('errror')
                 return res.send({})
             };
-            appointments.find({patient : data[0]._id}, (error , app)=> {
+            appointments.find({patient : data.id}, (error , appointments)=> {
 
                 if (error || data.length === 0) {
                     console.log('error || data.length === 0', appointments)
                     return res.send({a:'whaaaat??'})
                 }
-                var result = {
-                    patient:data[0],
-                    appointments:app
-                }
-                console.log(result)
-                return res.send(result);
+                console.log('kokokokok')
+                console.log(data)
+                data[0].appointments = appointments
+                return res.send(data[0]);
             })
         })
     // }
@@ -460,34 +455,22 @@ app.put("/reservedappointments", function(req, res) {
 app.delete('/deleteAppointment' , function (req , res) {
     //i will recieve appointment object like the schema 
     console.log('deleteAppointment ======================>>', req.body, req.session.username)
-    appointments.remove({id : req.body.reservedAppointment._id}, function(err, data) {
-        if (err) {
-            res.send();
-            return console.log('error removing reserved appoinment');
-        }
-        if (data.nModified === 0) {
-            console.log('data weren\'t deleted');
-        }
-        console.log('data removed : ' , data );
-        res.send();
+    appointments.remove({id : req.body.reservedAppointment.id}, function(err, data) {
+        if (err) {return console.log('error removing reserved appoinment')}
+        console.log('data removed : ' ,data )
     })
 })
-
 
  // delete open appoinment 
 app.delete('/deleteOpenAppointment' , function (req , res) {
     //i will recieve appointment object like the schema 
     console.log('deleteAppointment ======================>>', req.body , 'for the doctor', req.session.username)
-    console.log('req.body should be str ...');
-    doctors.find({name : req.session.username} , (err, result)=> {
-        if (err) return consolr.log('error finding doc : ', req.session.username)
-        deleter (result[0]._id, req.body.time + ' ' + req.body.date , ()=>{
-            res.send();
-        })
-    });
+    console.log('req.body should be str ...')
+    deleter (req.body.reservedAppointment.id, req.body , ()=>{
+        res.send();
+    })
+    
 })
-
-
 
 function deleter (id , timeToDelete , cb) {
 
