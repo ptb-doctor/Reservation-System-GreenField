@@ -5,17 +5,17 @@
 
     <div>
       <a class="pull-left" href="#">   
-        <img style= "margin-right: 40px; margin-left:30px" class="img-rounded" src={{profile.image}} width="150" height="250" />
+        <img style= "margin-right: 40px; margin-left:30px" class="img-rounded" src={{profile.patient.image}} width="150" height="250" />
       </a>
       <br>
     </div>
     <br>
     <div>
-      <span style="color:#2E8B57; font-size: 55px;" > Name: </span><span style="color: black; font-size: 55px;">{{profile.name}}</span>
+      <span style="color:#2E8B57; font-size: 55px;" > Name: </span><span style="color: black; font-size: 55px;">{{profile.patient.name}}</span>
     </div>  
     <br>
     <div>
-      <span style="color:#2E8B57; font-size: 55px"> Phone: </span> <span style="color: black; font-size: 55px;">{{profile.phone}} </span>
+      <span style="color:#2E8B57; font-size: 55px"> Phone: </span> <span style="color: black; font-size: 55px;">{{profile.patient.phone}} </span>
     </div>
   <br>
 </div>
@@ -32,12 +32,11 @@
 <hr>
 
        <ul>
-               <div ng-repeat="appointment in profile.appointment">
+               <div ng-repeat="appointment in profile.appointments">
                  <div class="well" style="background-color: rgba(190,190,190,0.3);">
                 <li>
                     <h4><b>Time:</b> {{appointment.time}}</h4>
                     <h4><b>Case:</b> {{appointment.case}}</h4>
-                    <h4><b>Recomindations:</b> {{appointment.recomendations}}</h4>
                 </li>
                 <button ng-click="" class="btn btn-danger">Delete</button>
               </div>
