@@ -6,12 +6,12 @@
                <img ng-src="{{doctor.image}}" class="media-object" style="width:80px" data-toggle="modal" data-target="#myAppointments" ng-click="getDoctorData(doctor.name)"/>
             </div>
             <div class="media-body">
-               <h1 class="media-heading">Doctor: {{doctor.name}}</h1>
+               <h1 class="media-heading"><span style="color:#2E8B57; font-size: 40px;" > Doctor: </span> {{doctor.name}}</h1>
                <h4>
-                  Phone: {{doctor.phone}}
+                  <span style="color:#2E8B57; font-size: 20px;" > Phone: </span> {{doctor.phone}}
                </h4>
                <h4>
-                  Major: {{doctor.major}}
+                  <span style="color:#2E8B57; font-size: 20px;" > Major: </span>{{doctor.major}}
                </h4>
             </div>
          </div>
@@ -29,12 +29,12 @@
                <img ng-src="{{currentDoctor[0].image}}" class="media-object" style="width:80px" data-toggle="modal" data-target="#myAppointments"/>
              </div>
              <div class="media-body">
-               <h1 class="media-heading">Doctor: {{currentDoctor[0].name}}</h1>
+               <h1 class="media-heading"><span style="color:#2E8B57; font-size: 40px;" > Doctor: </span> {{currentDoctor[0].name}}</h1>
                <p>
-                 Phone: {{currentDoctor[0].phone}}
+                 <span style="color:#2E8B57; font-size: 20px;" > Phone: </span> {{currentDoctor[0].phone}}
                </p>
                <p>
-                 Major: {{currentDoctor[0].major}}
+                 <span style="color:#2E8B57; font-size: 20px;" > Major: </span> {{currentDoctor[0].major}}
                </p>
                <div class="row">
                  <div class="col-lg-8">
