@@ -129,6 +129,7 @@ app.get('/getDoctors', (req, res) => {
 });
 // End TEST
 // Get specific doctor
+//this one for the main page 
 app.post('/getDoctorData', (req, res) => {
      // this request will be triggered when the user click on the doctor picture
       // in the - main.html - and it will find the doctor and return his data
@@ -142,7 +143,21 @@ app.post('/getDoctorData', (req, res) => {
         res.send(data);
     });
 });
-
+// Get specific doctor
+//this one for the doctor profile
+app.get('/docInfo', (req, res) => {
+     // this request will be triggered when the user click on the doctor picture
+      // in the - main.html - and it will find the doctor and return his data
+    // console.log('********************>', req.body.doctorName);
+    doctors.find({
+        name: req.session.username
+    }, (err, data) => {
+        if (err) {
+            console.log(err);
+        }
+        res.send(data);
+    });
+});
 
 // Load reserved appointments from doctor side (admin.js)
 app.get('/getDoctorReservedAppointments', (req, res) => {
@@ -375,15 +390,24 @@ app.put("/reservedappointments", function(req, res) {
     // this request is triggered by the submit button by when the user 
     // chooses an appointment to reserve, 
     console.log('req.body at reservedappointments------->', req.body);
-    deleter (req.body.doctor.id , req.body.opens , ()=> {
+    var str = req.body.opens.split(' ');
+    deleter (req.body.doctor.id , {time : str[0] , date : str[1]} , ()=> {
         patients.find({name: req.session.username}, (err, patient) => {
-            var obj = {
-                doctor: req.body.doctor.id ,
-                patient: patient.id,
-                time: [req.body.opens] ,
-                recomendations: '' ,
-                case: req.body.case
-            }
+            var obj = new appointments({
+                            doctor: req.body.doctor.id ,
+                            patient: patient.id,
+                            time: [req.body.opens] ,
+                            recomendations: '' ,
+                            case: req.body.Case
+                        })
+            obj.save()
+                .then(()=>{
+                    console.log(obj , ' saved to db');
+                })
+                .catch(()=> {
+                    console.log('error saving : ', obj);
+                })
+
         })
 
     })
@@ -426,8 +450,19 @@ function deleter (id , opens , cb) {
     })
 }
 
+app.post('/recomendation', (req,res)=>{
+    console.log('recomendation : ', req.body.recomendation , ' from the doctor : ' , req.session.username );
+    console.log('the appointment : ', req.body.appointment);
+    // doctors.find({ doctor : req.session.username },(err,data)=>{
+    //     if(err)return console.log('err');
+    //     if(data.length === 0)return console.log('the array is empty');
 
-
+        appointments.update({ id : req.body.appointment.id }, { $set: { recomendations: req.body.recomendation }},{ multi: false },(error,result)=> {
+            res.send();
+        })
+    // })
+    
+})
 
 //************************************
 // listen to port 2036 
