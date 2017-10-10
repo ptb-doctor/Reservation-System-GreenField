@@ -49,7 +49,7 @@ app.use(cookieParser());
 // var loggedIn = false;
 //make session
 app.use(session({
-    secret: "asynco",
+    secret: "ptb",
     resave: false,
     saveUninitialized: true
 }));
@@ -85,35 +85,27 @@ app.get('/checkIsLoggedIn', (req, res) => {
 
 // client page 
 app.get('/', (req, res) => {
-    console.log('inside get/')
-    if (!req.session.username) {
-        console.log('idon\'t  have a session');
-        //res.status(200);
-        return res.redirect('/FrontEnd/views/login.html');
-    } else {
-      console.log('i have a session');
-      //res.status(200);
+    console.log('inside get////////');
       res.redirect('/FrontEnd/index.html');
-    }
 })
 
-app.get('/index', (req, res) => {
-    console.log('inside get/')
-    if (!req.session.username) {
-        console.log('idon\'t  have a session');
-        //res.status(200);
-        return res.redirect('/FrontEnd/views/login.html');
-    } else {
-      console.log('i have a session');
-      //res.status(200);
-      res.redirect('/FrontEnd/index.html');
-    }
-})
+// app.get('/index', (req, res) => {
+//     console.log('inside get/')
+//     if (!req.session.username) {
+//         console.log('idon\'t  have a session');
+//         //res.status(200);
+//         return res.redirect('/FrontEnd/views/login.html');
+//     } else {
+//       console.log('i have a session');
+//       //res.status(200);
+//       res.redirect('/FrontEnd/index.html');
+//     }
+// })
 
 // get login page 
-app.get('/login', function(req, res) {
-    res.redirect('/FrontEnd/views/login.html');
-})
+// app.get('/login', function(req, res) {
+//     res.redirect('/FrontEnd/views/login.html');
+// })
 
 // Get all doctors
 app.get('/getDoctors', (req, res) => {
@@ -124,6 +116,15 @@ app.get('/getDoctors', (req, res) => {
             console.log('err : ', err);
         }
         // console.log('------------> all users', data);
+        data = data.map((doc)=> {
+            doc.open = doc.open.map((ele) => {
+                console.log(ele ," : to change from str to object")
+                return changeDate(ele);
+            })
+            return doc;
+        })
+        console.log(data[0].open)
+        console.log('inside get/getDoctors .............')
         res.send(data);
     });
 });
@@ -138,8 +139,14 @@ app.post('/getDoctorData', (req, res) => {
         name: req.body.doctorName
     }, (err, data) => {
         if (err) {
-            console.log(err);
+            return console.log(err);
         }
+        if (data.length === 0) {
+            return console.log("emty data post('/getDoctorData')")
+        }
+        data[0].open = data[0].open.map((app)=> {
+            return changeDate(app);
+        })
         res.send(data);
     });
 });
@@ -152,9 +159,13 @@ app.get('/docInfo', (req, res) => {
     doctors.find({
         name: req.session.username
     }, (err, data) => {
-        if (err) {
-            console.log(err);
+        if (err || data.length === 0) {
+            console.log(err , data);
+            return res.send({})
         }
+        data[0].open = data[0].open.map((app)=> {
+            return changeDate(app);
+        })
         res.send(data);
     });
 });
@@ -167,17 +178,18 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
     doctors.find({
         name: req.session.username
     }, (err, data) => {
-        /*data is obj like => { id , name , password , phone , major , open , image }*/
-        if (err || !data) {
+        /*data is array of objects like => { id , name , password , phone , major , open , image }*/
+        if (err || !data.length) {
             console.log(err);
         }
         else {
             appointments.find({
-                doctor : data.id
+                doctor : data[0].id
             }, (error, info) => {
                 if (err) return console.log(err);
                 //info is array of objects , each object is an appointment
                 //{id , doctor , patient , time , recomendations , case}
+                consoloe.log(data.length ,' appointments for the doc : ', req.session.username)
                 res.send(info);
             })
         }       
@@ -240,7 +252,8 @@ app.get('/logout', function(req, res) {
     req.session.username = null;
     req.session.password = null;
     console.log('get logout>>>>>>>>>>>>>', req.session);
-    res.redirect('/login');
+    // res.redirect('/login');
+    res.send();
 });
 
 // Sign Up  form POST 
@@ -279,7 +292,8 @@ app.post('/signup', upload.any(), function(req, res) {
             var user = new doctors(addDoc);
             user.save()
                 .then(item => {
-                    res.redirect('/FrontEnd/views/login.html');
+                    // res.redirect('/FrontEnd/views/login.html');
+                    res.send();
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -316,7 +330,8 @@ app.post('/patient', (req, res) => {
             var user = new patients(addPatient);
             user.save()
                 .then(item => {
-                    res.redirect('/FrontEnd/views/login.html');
+                    //res.redirect('/FrontEnd/views/login.html');
+                    res.send();
                 })
                 .catch(err => {
                     res.status(400).send("unable to save to database")
@@ -326,21 +341,21 @@ app.post('/patient', (req, res) => {
 });
 
 // Sign Up GET
-app.get('/signup', function(req, res) {
-    /* body... */
-    res.redirect('/FrontEnd/views/signup.html')
-});
+// app.get('/signup', function(req, res) {
+//     res.redirect('/FrontEnd/views/signup.html')
+// });
 
 // Add an appointment to doctor 
 app.put('/addAppointments', function(req, res) {
     // this request will be triggered by - admin.html - 
     // and will store the new appointment in the db.
-    console.log('-------- addappointments', req.body, '*******', req.session)
+    console.log('-------- addappointments', req.body, '***for the doctor****', req.session.username);
+
     doctors.update({
         name: req.session.username
     }, {
         $push: {
-            open: req.body.newAppointment
+            open: req.body.newAppointment.time +' '+req.body.newAppointment.date
         }
     }, function(err, updateUser) {
         if (err) {
@@ -381,22 +396,32 @@ app.get('/patientprofile', (req , res) => {
 
 
 // Reserve an appointment from client 
-/*i want to recieve doctor body as : 
-    doctor : {as schema} ,
-    case : 'string of case description',
-    opens : {object of schema as ssent}
+/*{ doctor: 
+   { _id: '59dc80482ed39f108c53abc7',
+     name: 'aa',
+     password: 'aa',
+     phone: '11',
+     major: 'aa',
+     image: 'c5970426f31149f21ff871551a696f4e',
+     __v: '0',
+     open: [ [Object] ] },
+  time: '12:00 2017-10-04',
+  Case: 'asas' }
+
 */
 app.put("/reservedappointments", function(req, res) {
     // this request is triggered by the submit button by when the user 
     // chooses an appointment to reserve, 
-    console.log('req.body at reservedappointments------->', req.body);
-    var str = req.body.opens.split(' ');
-    deleter (req.body.doctor.id , {time : str[0] , date : str[1]} , ()=> {
+    console.log('req.body at reservedappointments------->', req.session);
+    // var str = req.body.time.split(' ');
+    // var time = {time : str[0] , date : str[1]}
+    deleter (req.body.doctor.id , req.body.time , ()=> {
         patients.find({name: req.session.username}, (err, patient) => {
+            console.log('patient:', patient[0]._id , req.body.doctor._id)
             var obj = new appointments({
-                            doctor: req.body.doctor.id ,
-                            patient: patient.id,
-                            time: [req.body.opens] ,
+                            doctor: req.body.doctor._id ,
+                            patient: patient[0]._id,
+                            time: req.body.time ,
                             recomendations: '' ,
                             case: req.body.Case
                         })
@@ -404,8 +429,9 @@ app.put("/reservedappointments", function(req, res) {
                 .then(()=>{
                     console.log(obj , ' saved to db');
                 })
-                .catch(()=> {
+                .catch((err)=> {
                     console.log('error saving : ', obj);
+                    console.log('error saving : ', err);
                 })
 
         })
@@ -427,19 +453,21 @@ app.delete('/deleteAppointment' , function (req , res) {
  // delete open appoinment 
 app.delete('/deleteOpenAppointment' , function (req , res) {
     //i will recieve appointment object like the schema 
-    console.log('deleteAppointment ======================>>', req.body, req.session.username)
+    console.log('deleteAppointment ======================>>', req.body , 'for the doctor', req.session.username)
+    console.log('req.body should be str ...')
     deleter (req.body.reservedAppointment.id, req.body , ()=>{
         res.send();
     })
     
 })
 
-function deleter (id , opens , cb) {
+function deleter (id , timeToDelete , cb) {
+
     doctors.update({
         id : id
     }, {
         $pull : {
-            open : opens
+            open : timeToDelete
         }
     }, (err, updated) => {
         if (err) console.log('err deleteing open appointment', req.body);
@@ -448,6 +476,15 @@ function deleter (id , opens , cb) {
             cb();
         }
     })
+}
+
+function changeDate (str) {
+    console.log(str , ' : this is str at changeDate ')
+    var arr = str.split(' ');
+    return {
+        time : arr[0],
+        date : arr[1]
+    }
 }
 
 app.post('/recomendation', (req,res)=>{
