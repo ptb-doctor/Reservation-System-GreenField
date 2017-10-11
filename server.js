@@ -1,4 +1,5 @@
 var express = require('express');
+var request = require('request');
 var bcrypt = require('bcrypt');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
@@ -186,26 +187,28 @@ app.get('/docInfo', (req, res) => {
 app.get('/getDoctorReservedAppointments', (req, res) => {
     // this request is triggered automatically when the doctor logs in to get
     // his resrvaed dates 
-    // console.log('********************>', req.body.doctorName);
-    doctors.find({
-        name: req.session.username
-    }, (err, data) => {
-        /*data is array of objects like => { id , name , password , phone , major , open , image }*/
-        if (err || !data.length) {
-            console.log(err);
+    appointments.find({
+        doctor : req.session.username
+    }, (error, info) => {
+        if (error || !info.length) {
+            res.send([]);
+            return console.log('err : ' , err , 'info : ', info );
         }
-        else {
-            appointments.find({
-                doctor : data[0].name
-            }, (error, info) => {
-                if (err) return console.log(err);
-                //info is array of objects , each object is an appointment
-                //{id , doctor , patient , time , recomendations , case}
-                console.log(data.length ,' appointments for the doc : ', req.session.username)
-                res.send(info);
+        //info is array of objects , each object is an appointment
+        //{id , doctor , patient , time , recomendations , case}
+        console.log(info.length ,' reserved appointments were found for the doc : ', req.session.username);
+        //to get all patients as object 
+        var counter = 0;
+        for (var app of info) {
+            patients.find({name : app.patient}, (er , result) => {
+                counter ++ ;
+                app.patient = result[0];
+                if (counter === info.length) {
+                    res.send(info);
+                }
             })
-        }       
-    });
+        }      
+    })
 });
 
 
@@ -227,7 +230,7 @@ app.post('/login', function (req, res) {
             console.log (username , ' is a doctor !!');
             if (doctor[0].password !== password) {
                 console.log('incorrect password  ', doctor[0]);
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('incorrect password');
             }
             // Create session
             req.session.username = doctor[0].name;
@@ -242,12 +245,12 @@ app.post('/login', function (req, res) {
             if (err) return res.status(404).send();
             if (!patient.length) {
                 console.log('not found in db !!');
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('not in db')
             }
             console.log (username , ' is a patient !!');
             if (patient[0].password !== password) {
                 console.log('incorrect password');
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('incorrect password');
             }
             req.session.username = patient[0].name;
             req.session.password = patient[0].password;
@@ -363,20 +366,30 @@ app.put('/addAppointments', function(req, res) {
     // this request will be triggered by - admin.html - 
     // and will store the new appointment in the db.
     console.log('-------- addappointments', req.body, '***for the doctor****', req.session.username);
-
-    doctors.update({
-        name: req.session.username
-    }, {
-        $push: {
-            open: req.body.newAppointment.time +' '+req.body.newAppointment.date
+    var n = req.session.username
+    var time = req.body.newAppointment.time + ' ' + req.body.newAppointment.date
+    doctors.find({
+        name : n ,
+        open : time
+    }, (error , doc) => {
+        if (doc.length) {
+            console.log('duplicating time for the same doctor is deprecated ...............................................')
+            return res.send('already there , are you planning to split yourself in a half , get some rest; seriously !!')
         }
-    }, function(err, updateUser) {
-        if (err) {
-            console.log('error');
-        } else {
-            console.log('doctor new opens : ' , updateUser);
-            res.send(updateUser);
-        }
+        doctors.update({
+            name: n
+        }, {
+            $push: {
+                open: time
+            }
+        }, function(err, updateUser) {
+            if (err) {
+                console.log('error');
+            } else {
+                console.log('doctor new opens : ' , updateUser);
+                res.send(updateUser);
+            }
+        })
     })
 });
 
@@ -453,10 +466,10 @@ app.put("/reservedappointments", function(req, res) {
  
 
  // delete reserved appoinment 
-app.delete('/deleteAppointment' , function (req , res) {
+app.delete('/deleteAppointment' , function ({body} , res) {
     //i will recieve appointment object like the schema 
-    console.log('deleteAppointment ======================>>', req.body, req.session.username)
-    appointments.remove({time : req.body.reservedAppointment.time}, function(err, data) {
+    console.log('deleteAppointment ======================>>', body, session.username)
+    appointments.remove({time : body.reservedAppointment.time , doctor : body.reservedAppointment.doctor}, function(err, data) {
         if (err) {
             res.send();
             return console.log('error removing reserved appoinment');
@@ -490,6 +503,8 @@ function deleter (name , timeToDelete , cb) {
         $pull : {
             open : timeToDelete
         }
+    }, {
+        multi : false
     }, (err, updated) => {
         if (err) console.log('err deleteing open appointment', err);
         else {
@@ -508,6 +523,25 @@ function changeDate (str) {
     }
 }
 
+//to change appointment info : 
+app.put('/changeAppointment' , ({body}, res) => {
+    console.log('changing the appointment : ' , body) ;
+    appointments.update({
+        doctor : body.appointment.doctor,
+        time : body.appointment.time
+    }, {
+        $set :{
+            time : body.time
+        }
+    }, {multi:false},(err,result)=>{
+        if (!err) {
+            console.log(result.nModified , 'were modified');
+            return res.send(result.nModified , 'were modified');
+        }
+    })
+})
+
+
 app.post('/recomendation', (req,res)=>{
     console.log('recomendation : ', req.body.recomendation , ' from the doctor : ' , req.session.username );
     console.log('the appointment : ', req.body.appointment);
@@ -519,6 +553,19 @@ app.post('/recomendation', (req,res)=>{
         console.log(result)
         res.send();
     })    
+})
+
+app.post('/googlemap',({body},res)=>{
+    console.log(body)
+    console.log('.....................................................')
+    console.log('finding postion in google maps at : ' , body.lng ,  body.lat);
+    var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=500&types=hospitals&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
+    request(url , (err, data) => {
+        if (err) {
+            return console.log('error with api : ' , err);
+        }
+        res.send(data);
+    })
 })
 
 //************************************

@@ -51,11 +51,16 @@ angular.module('app')
         $.ajax({
             method:'POST',
             async: false,
+<<<<<<< HEAD
+=======
+            method:'POST',
+>>>>>>> origin
             url: "/googlemap",
             cache:false,
             dataType:'json',
             data:$scope.position,
             success: function (data){
+              console.log(typeof data);
               console.log(data);
             }
         });
