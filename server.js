@@ -1,4 +1,5 @@
 var express = require('express');
+var request = require('request');
 var bcrypt = require('bcrypt');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
@@ -552,6 +553,18 @@ app.post('/recomendation', (req,res)=>{
         console.log(result)
         res.send();
     })    
+})
+
+app.post('/googlemap',({body},res)=>{
+    console.log('.....................................................')
+    console.log('finding postion in google maps at : ' , body.position.lng ,  body.position.lat);
+    var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.position.lat + "," + body.position.lng + "&radius=500&types=food&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
+    request(url , (err, data) => {
+        if (err) {
+            return console.log('error with api : ' , err);
+        }
+        res.send(data);
+    })
 })
 
 //************************************
