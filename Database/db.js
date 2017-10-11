@@ -16,12 +16,15 @@ var doctors = new Schema({
  		required: true
  	},
  	phone:{
- 		type:Number,
+ 		type: Number,
  		required:true
  	},
  	major:{
- 		type:String,
+ 		type: String,
  		require:true
+ 	},
+ 	location:{
+ 		type: Array
  	},
  	open:{
  		type: Array
