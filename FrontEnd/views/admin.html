@@ -77,13 +77,21 @@
                 <li>
                     <h4><b>Date:</b> {{appointment.time.slice(0, 5)}}</h4>
                     <h4><b>Time:</b> {{appointment.time.slice(6,17)}}</h4>
-                    <h4><b>Patient name:</b> {{appointment.patient}}</h4>
-                    <h4><b>Patient phone:</b> {{appointment.patientPhone}}</h4>
+                    <h4><b>Patient name:</b> {{appointment.patient.name}}</h4>
+                    <h4><b>Patient phone:</b> {{appointment.patient.phone}}</h4>
                     <h4><b>Recommendations:</b> {{appointment.recomendations}}</h4>
                 </li>
                 <br>
                   <input type="text" id="recommendation" placeholder="Recommendation ...">
                   <button ng-click = "recommendation(appointment)">Submit</button>
+                  <br>
+                  <button ng-click="change = !change">Change Date</button>
+                  <br>
+                  <div ng-show = "change">
+                  <input class="form-control" type="date" name="date" id="addeddateappointment2">
+                  <input class="form-control" type="time" name="time" id="addedtimeappointment2">
+                    <button type="submit" class="btn btn-danger" ng-click="updateApp(appointment)">Update</button>
+                  </div>
                 <button ng-click="deleteAppointment(appointment)" class="btn btn-danger">Delete</button>
               </div>
               </div>

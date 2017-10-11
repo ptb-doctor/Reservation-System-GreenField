@@ -1,8 +1,8 @@
 var mongoose=require('mongoose');
-
 var Schema=mongoose.Schema;
+mongoose.Promise = require('bluebird');
 
-//database name is "admins".
+//database name is "ptb".
 //mongodb://asynco:1234@ds113445.mlab.com:13445/asynco
 
 var doctors = new Schema({
@@ -16,12 +16,15 @@ var doctors = new Schema({
  		required: true
  	},
  	phone:{
- 		type:Number,
+ 		type: Number,
  		required:true
  	},
  	major:{
- 		type:String,
+ 		type: String,
  		require:true
+ 	},
+ 	location:{
+ 		type: Array
  	},
  	open:{
  		type: Array
