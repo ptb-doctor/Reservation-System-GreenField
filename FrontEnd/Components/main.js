@@ -4,6 +4,33 @@ angular.module('app')
     $scope.doctors;
     $scope.currentDoctor;
     $scope.timeA;
+    $scope.isLoggedIn = false;
+    $scope.doctor = false;
+  
+    $scope.checkIsLoggedIn = function() {
+      console.log(';lk;lk;lk');
+      // $http({
+      //   url:'/checkIsLoggedIn',
+      //   method: 'GET',
+      // }).then(function successCallback(res){
+      //   $scope.isLoggedIn = res;
+      //   console.log(res, $scope.isLoggedIn);
+      // })
+      $.ajax({
+        url: '/checkIsLoggedIn',
+        method: 'GET',
+        async: false,
+        success: function (data){
+          if(data=='doctor'){
+            $scope.doctor=true
+            $scope.isLoggedIn = true;}
+  
+          if(data=='patient'){
+            $scope.doctor=false
+            $scope.isLoggedIn = true;}
+        }
+      })
+    }
 // load the doctors informations from the database 
     $scope.loadPage=function (){
       $.ajax({
@@ -68,6 +95,10 @@ angular.module('app')
           currentDoctors[i].showAll = !currentDoctors[i].showAll;
         }
       }
+    }
+    $scope.init = function(){
+      $scope.loadPage()
+      $scope.checkIsLoggedIn()
     }
  })
  .component('main', {

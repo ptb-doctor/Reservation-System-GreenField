@@ -30,6 +30,7 @@ $scope.addApointment = function() {
                     console.log('apointment added  seccessfuly', data);
                 }
             })
+            $scope.getDocInfo()
         };
 // it will print the reserved appointments from the database
 $scope.loadAppointments = function() {
@@ -78,6 +79,7 @@ $scope.recommendation = function(appointment){
             console.log('sent')
         }
     })
+    $scope.loadAppointments()
 }
 
 $scope.deleteAppointment = (appointment) => {
@@ -93,6 +95,7 @@ $scope.deleteAppointment = (appointment) => {
             console.log('hahahahahah')
         }
     })
+    $scope.loadAppointments()
 }
 
         $scope.deleteOpenAppointment = (appointment) => {
@@ -108,6 +111,7 @@ $scope.deleteAppointment = (appointment) => {
                     console.log('hahahahahah')
                 }
             })
+            $scope.getDocInfo()
         }
     })
     .component('admin', {

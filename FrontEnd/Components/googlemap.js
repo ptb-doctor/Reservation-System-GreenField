@@ -50,12 +50,13 @@ angular.module('app')
         //console.log('seaaaaarch')
         $.ajax({
             async: false,
-            method:'POST'
+            method:'POST',
             url: "/googlemap",
             cache:false,
             dataType:'json',
             data:$scope.position,
             success: function (data){
+              console.log(typeof data);
               console.log(data);
             }
         });
