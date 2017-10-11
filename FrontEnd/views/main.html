@@ -1,4 +1,4 @@
-<div id="mainpage" ng-controller="AppCtrl" ng-init="loadPage()">
+<div id="mainpage" ng-controller="AppCtrl" ng-init="init()">
    <div style="margin-left: 2em">
       <div ng-show="true" class="media well well-fuild col-lg-6 col-lg-offset-3 col-md-6 col-sm-12" ng-repeat="doctor in doctors">
          <div class="media-left media-top">
@@ -20,7 +20,7 @@
    <!-- Modal addAppointments -->
    <!-- <div id="appointmentModal"></div> -->
    <!-- ng-init="getDoctorData('admin')" -->
-   <div class="modal fade" id="myAppointments" role="dialog">
+   <div class="modal fade" id="myAppointments" role="dialog" >
      <div class="modal-dialog">
        <div class="modal-content">
          <div class="modal-body">
@@ -37,7 +37,15 @@
                  <span style="color:#2E8B57; font-size: 20px;" > Major: </span> {{currentDoctor[0].major}}
                </p>
                <div class="row">
-                 <div class="col-lg-8">
+                 <div ng-hide="isLoggedIn && !doctor">
+                   <center>
+                   <h1>Sorry, you need to sign in as a user first</h1>
+                   <br>
+                   <button type="submit" class="btn btn-success" data-dismiss="modal">Dismiss</button> 
+                   </center>                 
+                 </div>
+                 <div ng-show="isLoggedIn && !doctor">
+                 <div class="col-lg-8" >
                    <label>Appointments</label>
                    <select class="selectpicker" ng-model="timeA" ng-change="selectedValue()"><option ng-repeat="app in currentDoctor[0].open">{{app.time}} {{app.date}}</option></select>
                    <!-- <div class="form-group">
@@ -61,6 +69,7 @@
                    <div class="modal-footer">
                      <button type="submit" class="btn btn-success" ng-click="reserveAppointment(timeVal)" data-dismiss="modal">Submit</button>
                    </div>
+                 </div>
                  </div>
                </div>
              </div>
