@@ -229,7 +229,7 @@ app.post('/login', function (req, res) {
             console.log (username , ' is a doctor !!');
             if (doctor[0].password !== password) {
                 console.log('incorrect password  ', doctor[0]);
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('incorrect password');
             }
             // Create session
             req.session.username = doctor[0].name;
@@ -244,12 +244,12 @@ app.post('/login', function (req, res) {
             if (err) return res.status(404).send();
             if (!patient.length) {
                 console.log('not found in db !!');
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('not in db')
             }
             console.log (username , ' is a patient !!');
             if (patient[0].password !== password) {
                 console.log('incorrect password');
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('incorrect password');
             }
             req.session.username = patient[0].name;
             req.session.password = patient[0].password;
@@ -521,6 +521,25 @@ function changeDate (str) {
         date : arr[1]
     }
 }
+
+//to change appointment info : 
+app.put('/changeAppointment' , ({body}, res) => {
+    console.log('changing the appointment : ' , body) ;
+    appointments.update({
+        doctor : body.appointment.doctor,
+        time : body.appointment.time
+    }, {
+        $set :{
+            time : body.time
+        }
+    }, {multi:false},(err,result)=>{
+        if (!err) {
+            console.log(result.nModified , 'were modified');
+            return res.send(result.nModified , 'were modified');
+        }
+    })
+})
+
 
 app.post('/recomendation', (req,res)=>{
     console.log('recomendation : ', req.body.recomendation , ' from the doctor : ' , req.session.username );
