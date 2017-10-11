@@ -67,6 +67,20 @@ angular.module('app')
             }
         });
       }
+      $scope.doctors
+      $.ajax({
+                url:'/getDoctors',
+                dataType: 'json',
+                async: false,
+                success: function(data) {
+                   console.log('hwwwwwww')
+                   console.log(data)
+                   $scope.doctors=data 
+                }
+                ,error:function(){
+                    console.log('errrrrrrrror')
+                }
+      });
 
 })
 .component('googlemap',{
