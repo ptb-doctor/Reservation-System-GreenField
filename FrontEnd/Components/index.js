@@ -16,6 +16,9 @@ angular.module('app',['ngRoute'])
       .when('/main', {
       	templateUrl: 'views/realviews/main.html',
       })
+      .when('/googlemap', {
+        templateUrl: 'views/realviews/googlemap.html',
+      })
       .otherwise({
           redirectTo: '/main'
       });

@@ -1,4 +1,5 @@
 var express = require('express');
+var request = require('request');
 var bcrypt = require('bcrypt');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
@@ -229,7 +230,7 @@ app.post('/login', function (req, res) {
             console.log (username , ' is a doctor !!');
             if (doctor[0].password !== password) {
                 console.log('incorrect password  ', doctor[0]);
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('incorrect password');
             }
             // Create session
             req.session.username = doctor[0].name;
@@ -244,12 +245,12 @@ app.post('/login', function (req, res) {
             if (err) return res.status(404).send();
             if (!patient.length) {
                 console.log('not found in db !!');
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('not in db')
             }
             console.log (username , ' is a patient !!');
             if (patient[0].password !== password) {
                 console.log('incorrect password');
-                return res.redirect('/FrontEnd/index.html');
+                return res.send('incorrect password');
             }
             req.session.username = patient[0].name;
             req.session.password = patient[0].password;
@@ -522,6 +523,25 @@ function changeDate (str) {
     }
 }
 
+//to change appointment info : 
+app.put('/changeAppointment' , ({body}, res) => {
+    console.log('changing the appointment : ' , body) ;
+    appointments.update({
+        doctor : body.appointment.doctor,
+        time : body.appointment.time
+    }, {
+        $set :{
+            time : body.time
+        }
+    }, {multi:false},(err,result)=>{
+        if (!err) {
+            console.log(result.nModified , 'were modified');
+            return res.send(result.nModified , 'were modified');
+        }
+    })
+})
+
+
 app.post('/recomendation', (req,res)=>{
     console.log('recomendation : ', req.body.recomendation , ' from the doctor : ' , req.session.username );
     console.log('the appointment : ', req.body.appointment);
@@ -533,6 +553,19 @@ app.post('/recomendation', (req,res)=>{
         console.log(result)
         res.send();
     })    
+})
+
+app.post('/googlemap',({body},res)=>{
+    console.log(body)
+    console.log('.....................................................')
+    console.log('finding postion in google maps at : ' , body.lng ,  body.lat);
+    var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=500&types=hospitals&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
+    request(url , (err, data) => {
+        if (err) {
+            return console.log('error with api : ' , err);
+        }
+        res.send(data);
+    })
 })
 
 //************************************
