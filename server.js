@@ -186,26 +186,28 @@ app.get('/docInfo', (req, res) => {
 app.get('/getDoctorReservedAppointments', (req, res) => {
     // this request is triggered automatically when the doctor logs in to get
     // his resrvaed dates 
-    // console.log('********************>', req.body.doctorName);
-    doctors.find({
-        name: req.session.username
-    }, (err, data) => {
-        /*data is array of objects like => { id , name , password , phone , major , open , image }*/
-        if (err || !data.length) {
-            console.log(err);
+    appointments.find({
+        doctor : req.session.username
+    }, (error, info) => {
+        if (error || !info.length) {
+            res.send([]);
+            return console.log('err : ' , err , 'info : ', info );
         }
-        else {
-            appointments.find({
-                doctor : data[0].name
-            }, (error, info) => {
-                if (err) return console.log(err);
-                //info is array of objects , each object is an appointment
-                //{id , doctor , patient , time , recomendations , case}
-                console.log(data.length ,' appointments for the doc : ', req.session.username)
-                res.send(info);
+        //info is array of objects , each object is an appointment
+        //{id , doctor , patient , time , recomendations , case}
+        console.log(info.length ,' reserved appointments were found for the doc : ', req.session.username);
+        //to get all patients as object 
+        var counter = 0;
+        for (var app of info) {
+            patients.find({name : app.patient}, (er , result) => {
+                counter ++ ;
+                app.patient = result[0];
+                if (counter === info.length) {
+                    res.send(info);
+                }
             })
-        }       
-    });
+        }      
+    })
 });
 
 
@@ -363,20 +365,30 @@ app.put('/addAppointments', function(req, res) {
     // this request will be triggered by - admin.html - 
     // and will store the new appointment in the db.
     console.log('-------- addappointments', req.body, '***for the doctor****', req.session.username);
-
-    doctors.update({
-        name: req.session.username
-    }, {
-        $push: {
-            open: req.body.newAppointment.time +' '+req.body.newAppointment.date
+    var n = req.session.username
+    var time = req.body.newAppointment.time + ' ' + req.body.newAppointment.date
+    doctors.find({
+        name : n ,
+        open : time
+    }, (error , doc) => {
+        if (doc.length) {
+            console.log('duplicating time for the same doctor is deprecated ...............................................')
+            return res.send('already there , are you planning to split yourself in a half , get some rest; seriously !!')
         }
-    }, function(err, updateUser) {
-        if (err) {
-            console.log('error');
-        } else {
-            console.log('doctor new opens : ' , updateUser);
-            res.send(updateUser);
-        }
+        doctors.update({
+            name: n
+        }, {
+            $push: {
+                open: time
+            }
+        }, function(err, updateUser) {
+            if (err) {
+                console.log('error');
+            } else {
+                console.log('doctor new opens : ' , updateUser);
+                res.send(updateUser);
+            }
+        })
     })
 });
 
@@ -453,10 +465,10 @@ app.put("/reservedappointments", function(req, res) {
  
 
  // delete reserved appoinment 
-app.delete('/deleteAppointment' , function (req , res) {
+app.delete('/deleteAppointment' , function ({body} , res) {
     //i will recieve appointment object like the schema 
-    console.log('deleteAppointment ======================>>', req.body, req.session.username)
-    appointments.remove({time : req.body.reservedAppointment.time}, function(err, data) {
+    console.log('deleteAppointment ======================>>', body, session.username)
+    appointments.remove({time : body.reservedAppointment.time , doctor : body.reservedAppointment.doctor}, function(err, data) {
         if (err) {
             res.send();
             return console.log('error removing reserved appoinment');
@@ -490,6 +502,8 @@ function deleter (name , timeToDelete , cb) {
         $pull : {
             open : timeToDelete
         }
+    }, {
+        multi : false
     }, (err, updated) => {
         if (err) console.log('err deleteing open appointment', err);
         else {
