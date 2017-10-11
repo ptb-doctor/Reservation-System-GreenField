@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('loginCtrl', function($scope, $http){
+.controller('loginCtrl', function($scope, $http, $location){
   $scope.errorMessage;
   $scope.submit = function () {
   
