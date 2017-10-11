@@ -75,8 +75,8 @@
                <div ng-repeat="appointment in reservedAppointments">
                  <div class="well" style="background-color: rgba(190,190,190,0.3);">
                 <li>
-                    <h4><b>Date:</b> {{appointment.time.slice(0, 5)}}</h4>
-                    <h4><b>Time:</b> {{appointment.time.slice(6,17)}}</h4>
+                    <h4><b>Date:</b> {{appointment.time.slice(6,17)}}</h4>
+                    <h4><b>Time:</b> {{appointment.time.slice(0, 5)}}</h4>
                     <h4><b>Patient name:</b> {{appointment.patient.name}}</h4>
                     <h4><b>Patient phone:</b> {{appointment.patient.phone}}</h4>
                     <h4><b>Recommendations:</b> {{appointment.recomendations}}</h4>
