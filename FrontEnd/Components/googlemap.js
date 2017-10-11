@@ -21,9 +21,9 @@ div {
     var map, infoWindow;
     $scope.initMap=function() {
     $('.containerM').css({
-      'width' : '40%',
-      'background-color' : 'green'
+      'width' : '40%'
     });
+    $(".btn.btn-warning.btn-md").animate({marginLeft: "+=60%"} ,1000, swing);
     $('.containerMB').css({
         'float' : 'right'
     });
