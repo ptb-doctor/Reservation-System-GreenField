@@ -1,15 +1,16 @@
 
 
-  <div class="container well col-lg-4 col-lg-offset-4">
+  <div class="container well col-lg-4 col-lg-offset-4" ng-controller='loginCtrl'>
       <div class="page-header text-center">
         <h1><meduim style="font-family:Open Sans; font-weight:bold; color:#555;">Please Login</meduim></h1>
       </div>
-      <form role="form" class="form-login" action="/login" method="post">
 
           <input type="text" ng-model="username" name="username" class="form-control" id="username" placeholder="User Name" required="required"><br>
             <input type="password" ng-model="password" name="password" id="password" class="form-control" placeholder="Password" required="required"> <br>
       <button type="submit" class="btn btn-danger btn-block" ng-click="submit()">Submit</button>
-      </form>
+      <br>
+      <div ng-if="errorMessage" class="alert alert-danger" style="text-align: center;">{{ errorMessage }} </div>
+      <div ng-if="errorMessage" class="alert alert-info" style="text-align: center;"><a href="#/signup"> Sign Up Now ⟶</a></div>
     </div>
   </div>
 </div>
