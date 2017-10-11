@@ -537,7 +537,7 @@ app.put('/changeAppointment' , ({body}, res) => {
     }, {multi:false},(err,result)=>{
         if (!err) {
             //console.log(result.nModified , 'were modified');
-            return res.send(result.nModified , 'were modified');
+            return res.send('were modified');
         }
     })
 })

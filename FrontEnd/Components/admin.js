@@ -3,6 +3,7 @@ angular.module('app')
 .controller('adminCtrl', function($scope, $http) {
    $scope.docInfo = {}
    $scope.reservedAppointments;
+   $scope.change = false;
     // $scope.appointmentDate;
     // $scope.appointmentTime;
     // $scope.appointments;
@@ -44,6 +45,7 @@ $scope.loadAppointments = function() {
            console.log('++++++++++++++', data);
            $scope.reservedAppointments = data;
            var x = $scope.reservedAppointments[0].patient
+           console.log(x)
            $scope.reservedAppointments[0].patient = JSON.parse(x)
        }
    })
@@ -99,6 +101,30 @@ $scope.deleteAppointment = (appointment) => {
     })
     $scope.loadAppointments()
 }
+
+$scope.updateApp = function (appointment) {
+    $scope.appointmentDate2 = $('#addeddateappointment2').val();
+    $scope.appointmentTime2 = $('#addedtimeappointment2').val();
+            // for (var doctor=0 ; doctor < $scope.appointments.length ; doctor++){
+            //  $scope.username = $scope.appointments[doctor].username;
+            // }
+            console.log('+++++++++>', $scope.appointmentDate);
+            $.ajax({
+                url: '/changeAppointment',
+                method: 'PUT',
+                dataType: 'json',
+                async: false,
+                data: {
+                    appointment: appointment,
+                    time: $scope.appointmentTime2 + " " + $scope.appointmentDate2
+                },
+                success: function(data) {
+                    console.log('apointment added  seccessfuly', data);
+                }
+            })
+            $scope.loadAppointments()
+        };
+
 
         $scope.deleteOpenAppointment = (appointment) => {
             console.log('asdasdasdasd;as;kdmas;kdmja;sj', appointment)
