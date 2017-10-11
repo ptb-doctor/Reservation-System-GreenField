@@ -202,7 +202,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
         for (var app of info) {
             patients.find({name : app.patient}, (er , result) => {
                 counter ++ ;
-                app.patient = result[0];
+                app.patient = JSON.stringify(result[0]);
                 if (counter === info.length) {
                     res.send(info);
                 }
@@ -559,13 +559,27 @@ app.post('/googlemap',({body},res)=>{
     console.log(body)
     console.log('.....................................................')
     console.log('finding postion in google maps at : ' , body.lng ,  body.lat);
-    var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=500&types=hospitals&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
-    request(url , (err, data) => {
-        if (err) {
-            return console.log('error with api : ' , err);
-        }
-        res.send(data);
-    })
+    var count = 0 ;
+    function radius(r = 1000){
+        count ++ ;
+        var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=" + r + "&types=hospitals&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
+        request(url , (err, data) => {
+            console.log(data)
+            if (err) {
+                return console.log('error with api : ' , err);
+            }
+            if (!data.results) {
+                if (count === 4) {
+                    return res.send('no data!, why ? maybe blocked ...')
+                }
+                return radius(r+500);
+            }
+            console.log(data.results.length , ' hospitals was found next to position')
+            res.send(data);
+        })
+        
+    }
+
 })
 
 //************************************
