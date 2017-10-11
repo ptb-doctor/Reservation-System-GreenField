@@ -562,7 +562,7 @@ app.post('/googlemap',({body},res)=>{
     console.log('finding postion in google maps at : ' , body.lng ,  body.lat);
 
     var count = 0 ;
-    function radius(r = 1000){
+    function radius(r){
         count ++ ;
         var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=" + r + "&types=hospitals&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
         request(url , (err, data) => {
@@ -576,11 +576,12 @@ app.post('/googlemap',({body},res)=>{
                 }
                 return radius(r+500);
             }
-            console.log(data.results.length , ' hospitals was found next to position')
+            console.log(data.results.length , ' hospitals was found next to position');
+            
             res.send(data);
         })
-        
     }
+    radius(1000);
 
 })
 
