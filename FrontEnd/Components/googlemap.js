@@ -1,5 +1,7 @@
 angular.module('app')
 .controller('googlemap', ($scope, $http,$location) => {
+  $scope.hospitals;
+  $scope.render=false
   $scope.position;
   $scope.flag=false
   console.log('kokokokokokookoko')
@@ -11,7 +13,7 @@ angular.module('app')
         console.log('hiiii')
         map = new google.maps.Map(x, {
           center: {lat: -34.397, lng: 150.644},
-          zoom: 6
+          zoom: 11
         });
         infoWindow = new google.maps.InfoWindow;
 
@@ -48,7 +50,9 @@ angular.module('app')
       }
       $scope.search=function(){
         //console.log('seaaaaarch')
+        $scope.render=true
         $.ajax({
+            method:'POST',
             async: false,
             method:'POST',
             url: "/googlemap",
@@ -56,8 +60,10 @@ angular.module('app')
             dataType:'json',
             data:$scope.position,
             success: function (data){
-              console.log(typeof data);
-              console.log(data);
+              //console.log(typeof data);
+              var x=JSON.parse(data.body)
+              console.log(x.results);
+              $scope.hospitals=x.results
             }
         });
       }
