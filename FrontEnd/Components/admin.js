@@ -43,6 +43,8 @@ $scope.loadAppointments = function() {
         success: function(data) {
            console.log('++++++++++++++', data);
            $scope.reservedAppointments = data;
+           var x = $scope.reservedAppointments[0].patient
+           $scope.reservedAppointments[0].patient = JSON.parse(x)
        }
    })
 }

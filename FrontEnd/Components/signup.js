@@ -1,7 +1,8 @@
 	
 angular.module('app')
 .controller('signup', ($scope, $http,$location) => {
-	console.log('hiiiii')
+    console.log('hiiiii')
+    $scope.errorMessage;
 	$scope.image = document.getElementById('image').onchange = function(evt){
         var tgt = evt.target || window.event.srcElement,
         files = tgt.files;
@@ -51,29 +52,37 @@ angular.module('app')
 	}
 	$scope.signup=function(){
 		console.log('hiiiii')
-		
-      console.log("==============", $scope.image.src)
 		var username=document.getElementById('name').value;
 		var password=document.getElementById('password').value;
 		var phone=document.getElementById('phone').value
-		var specilization=document.getElementById('specilization').value
+        var specilization=document.getElementById('specilization').value
+        
+        $http.post("/signup", {username: username, password: password, phoneNumber:phone, specilization:specilization,image:$scope.image.src}).then(function(data){
+            console.log(data)
+            console.log("==========")
+            console.log(data.data)
+            if (data.data === "user name is already taken"){
+            $scope.errorMessage = data.data
+            console.log($scope.errorMessage)
+          } else {window.location = "#/login"}
+        });
 
-		$.ajax({
-        url: '/signup',
-        method: 'POST',
-        async: false,
-        data: {
-            username:username,
-            password:password,
-            phoneNumber:phone,
-            specilization:specilization,
-            image:$scope.image.src
-        },
-        success: () => {
-            console.log('sent')
-            $location.path('login');
-        }
-    })
+	// 	$.ajax({
+    //     url: '/signup',
+    //     method: 'POST',
+    //     async: false,
+    //     data: {
+    //         username:username,
+    //         password:password,
+    //         phoneNumber:phone,
+    //         specilization:specilization,
+    //         image:$scope.image.src
+    //     },
+    //     success: () => {
+    //         console.log('sent')
+    //         $location.path('login');
+    //     }
+    // })
 	}
 
 })
