@@ -1,15 +1,28 @@
-<button class="btn btn-warning btn-md" ng-click='initMap()'> <span ></span> Detect your location </button>
-<br>
-<br>
-<div style="height: 50%;" id="map"></div>
-<br>
-<button ng-if='flag' class="btn btn-warning btn-md" ng-click='search()'> <span ></span> search for hospitals </button>
+<div class="containerM containerMB" >
+	<center>
+		<button class="btn btn-warning btn-md" style="margin: 50px" ng-click='initMap()'> <span ></span> Detect your location 
+		</button>
+	</center>
+		<div style="height: 50%; margin: 20px" id="map">
+		</div>
+	
+</div>
 
-<div ng-if='render'>
-	<div class="media well well-fuild col-lg-6 col-lg-offset-3 col-md-6 col-sm-12" ng-repeat="hospital in hospitals">
-	<h1>{{hospital.name}}</h1>
 
-	 <a href={{hospital.photos[0].html_attributions[0].split('"')[1]}}>open location</a>
+
+
+
+<div class="containerM" style="float: left;">
+	<button ng-if='flag' class="btn btn-warning btn-md"  style="margin: 20px" ng-click='search()'> 
+	 	<span ></span>
+	 	search for hospitals 
+	</button>
+
+	<div ng-if='render'>
+		<div class="media well well-fuild col-lg-6 col-lg-offset-3 col-md-6 col-sm-12" ng-repeat="hospital in hospitals">
+			<h1>{{hospital.name}}</h1>
+			 <a href={{hospital.photos[0].html_attributions[0].split('"')[1]}}>open location</a>
+		</div>
 	</div>
 </div>
 
