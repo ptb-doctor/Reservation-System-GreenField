@@ -300,7 +300,7 @@ app.post('/signup', upload.any(), function(req, res) {
                 password: req.body.password,
                 phone: req.body.phoneNumber,
                 major: req.body.specilization,
-                location: [req.body.lat , req.body.lng],
+                location: [req.body.location.lat , req.body.location.lng],
                 image: req.body.image
             };
             console.log('req.body : ', req.body)
@@ -536,7 +536,7 @@ app.put('/changeAppointment' , ({body}, res) => {
         }
     }, {multi:false},(err,result)=>{
         if (!err) {
-            console.log(result.nModified , 'were modified');
+            //console.log(result.nModified , 'were modified');
             return res.send(result.nModified , 'were modified');
         }
     })
@@ -564,20 +564,21 @@ app.post('/googlemap',({body},res)=>{
     var count = 0 ;
     function radius(r){
         count ++ ;
-        var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=" + r + "&types=hospitals&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
+        var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=" + r + "&types=hospital&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
         request(url , (err, data) => {
-            console.log(data)
             if (err) {
                 return console.log('error with api : ' , err);
             }
-            if (!data.results) {
+            if ( !Object.keys(JSON.parse(data.body).results).length ){
+                console.log(count , ' tries to get data')
                 if (count === 4) {
                     return res.send('no data!, why ? maybe blocked ...')
                 }
                 return radius(r+500);
             }
-            console.log(data.results.length , ' hospitals was found next to position');
+            console.log(Object.keys(JSON.parse(data.body).results).length , ' hospitals was found next to position');
             
+            //res.send(JSON.parse(data.body).results);
             res.send(data);
         })
     }
