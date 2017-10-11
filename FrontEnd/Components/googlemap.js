@@ -49,8 +49,8 @@ angular.module('app')
       $scope.search=function(){
         //console.log('seaaaaarch')
         $.ajax({
+            method:'POST',
             async: false,
-            method:'POST'
             url: "/googlemap",
             cache:false,
             dataType:'json',
