@@ -4,7 +4,7 @@ angular.module('app')
         templateUrl: `./views/patientprofile.html`
  })
 .controller('patientprofileCtrl', function($scope, $http) {
-    console.log('hiiii')
+    console.log('hahahahaahah')
     $scope.profile;
     $.ajax({
                 url:'/patientprofile',
