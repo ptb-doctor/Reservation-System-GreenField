@@ -192,7 +192,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
     }, (error, info) => {
         if (error || !info.length) {
             res.send([]);
-            return console.log('err : ' , err , 'info : ', info );
+            return console.log('err : ' , error , 'info : ', info );
         }
         //info is array of objects , each object is an appointment
         //{id , doctor , patient , time , recomendations , case}
@@ -235,7 +235,7 @@ app.post('/login', function (req, res) {
             // Create session
             req.session.username = doctor[0].name;
             req.session.password = doctor[0].password;
-            console.log('--------doctor-------',doctor[0])
+            console.log('--------doctor-------',doctor[0].name)
             console.log('--------req.session-------',req.session)
             return res.redirect('/FrontEnd/index.html');
         }
@@ -300,6 +300,7 @@ app.post('/signup', upload.any(), function(req, res) {
                 password: req.body.password,
                 phone: req.body.phoneNumber,
                 major: req.body.specilization,
+                location: [req.body.location.lat , req.body.location.lng],
                 image: req.body.image
             };
             console.log('req.body : ', req.body)
@@ -535,7 +536,7 @@ app.put('/changeAppointment' , ({body}, res) => {
         }
     }, {multi:false},(err,result)=>{
         if (!err) {
-            console.log(result.nModified , 'were modified');
+            //console.log(result.nModified , 'were modified');
             return res.send(result.nModified , 'were modified');
         }
     })
@@ -561,25 +562,27 @@ app.post('/googlemap',({body},res)=>{
     console.log('finding postion in google maps at : ' , body.lng ,  body.lat);
 
     var count = 0 ;
-    function radius(r = 1000){
+    function radius(r){
         count ++ ;
-        var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=" + r + "&types=hospitals&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
+        var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + body.lat + "," + body.lng + "&radius=" + r + "&types=hospital&key=AIzaSyAhEds2N1zUK-VNf4fc21T0cSZEZUuloEc"
         request(url , (err, data) => {
-            console.log(data)
             if (err) {
                 return console.log('error with api : ' , err);
             }
-            if (!data.results) {
+            if ( !Object.keys(JSON.parse(data.body).results).length ){
+                console.log(count , ' tries to get data')
                 if (count === 4) {
                     return res.send('no data!, why ? maybe blocked ...')
                 }
                 return radius(r+500);
             }
-            console.log(data.results.length , ' hospitals was found next to position')
+            console.log(Object.keys(JSON.parse(data.body).results).length , ' hospitals was found next to position');
+            
+            //res.send(JSON.parse(data.body).results);
             res.send(data);
         })
-        
     }
+    radius(1000);
 
 })
 
