@@ -1,25 +1,15 @@
 angular.module('app')
-.controller('loginCtrl', function($scope){
+.controller('loginCtrl', function($scope, $http, $location){
   $scope.errorMessage;
   $scope.submit = function () {
   
     var name = $("#username").val();
     var password = $('#password').val()
-    $.ajax({
-      url: '/login',
-      method: 'post',
-      dataType: 'json',
-      data: {
-          username: name,
-          password: password
-      },
-      success: (data) => {
-          console.log(data)
-      },
-      error: (err) => {
-       $scope.errorMessage = err.responseText
-      }
-  })
+    $http.post("/login", {username: name, password: password}).then(function(data){
+      if (data.data === "not in db" || data.data === "incorrect password"){
+      $scope.errorMessage = data.data
+    } else {window.location = "/"}
+  });
 }
 })
 
