@@ -33,22 +33,33 @@ angular.module('app')
       console.log("==============", $scope.image.src)
 		var username=document.getElementById('name2').value;
 		var password=document.getElementById('password2').value;
-		var phone=document.getElementById('phone2').value
-		$.ajax({
-        url: '/patient',
-        method: 'POST',
-        async: false,
-        data: {
-            username:username,
-            password:password,
-            phoneNumber:phone,
-            myImage:$scope.image2.src
-        },
-        success: () => {
-            console.log('sent')
-            $location.path('login');
-        }
-    })
+        var phone=document.getElementById('phone2').value
+        
+        $http.post("/patient", {username: username, password: password, phoneNumber:phone,myImage:$scope.image2.src}).then(function(data){
+            console.log(data)
+            console.log("==========")
+            console.log(data.data)
+            if (data.data === "user name is already taken"){
+            $scope.errorMessage = data.data
+            console.log($scope.errorMessage)
+          } else {window.location = "#/login"}
+        });
+
+	// 	$.ajax({
+    //     url: '/patient',
+    //     method: 'POST',
+    //     async: false,
+    //     data: {
+    //         username:username,
+    //         password:password,
+    //         phoneNumber:phone,
+    //         myImage:$scope.image2.src
+    //     },
+    //     success: () => {
+    //         console.log('sent')
+    //         $location.path('login');
+    //     }
+    // })
 	}
 	$scope.signup=function(){
 		console.log('hiiiii')
