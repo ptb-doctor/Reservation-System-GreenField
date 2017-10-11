@@ -3,15 +3,15 @@
       <div ng-show="true" class="media well well-fuild col-lg-6 col-lg-offset-3 col-md-6 col-sm-12" ng-repeat="doctor in doctors">
          <div class="media-left media-top">
             <div class="media-left">
-               <img ng-src="{{'/uploads/' + doctor.image}}" class="media-object" style="width:80px" data-toggle="modal" data-target="#myAppointments" ng-click="getDoctorData(doctor.username)"/>
+               <img ng-src="{{doctor.image}}" class="media-object" style="width:80px" data-toggle="modal" data-target="#myAppointments" ng-click="getDoctorData(doctor.name)"/>
             </div>
             <div class="media-body">
-               <h1 class="media-heading">Doctor: {{doctor.username}}</h1>
+               <h1 class="media-heading"><span style="color:#2E8B57; font-size: 40px;" > Doctor: </span> {{doctor.name}}</h1>
                <h4>
-                  Phone: {{doctor.phoneNumber}}
+                  <span style="color:#2E8B57; font-size: 20px;" > Phone: </span> {{doctor.phone}}
                </h4>
                <h4>
-                  Specialization: {{doctor.specilization}}
+                  <span style="color:#2E8B57; font-size: 20px;" > Major: </span>{{doctor.major}}
                </h4>
             </div>
          </div>
@@ -26,29 +26,34 @@
          <div class="modal-body">
            <div class="media-left media-top">
              <div class="media-left">
-               <img ng-src="{{'/uploads/' + currentDoctor.image}}" class="media-object" style="width:80px" data-toggle="modal" data-target="#myAppointments"/>
+               <img ng-src="{{currentDoctor[0].image}}" class="media-object" style="width:80px" data-toggle="modal" data-target="#myAppointments"/>
              </div>
              <div class="media-body">
-               <h1 class="media-heading">Doctor: {{currentDoctor.username}}</h1>
+               <h1 class="media-heading"><span style="color:#2E8B57; font-size: 40px;" > Doctor: </span> {{currentDoctor[0].name}}</h1>
                <p>
-                 Phone: {{currentDoctor.phoneNumber}}
+                 <span style="color:#2E8B57; font-size: 20px;" > Phone: </span> {{currentDoctor[0].phone}}
                </p>
                <p>
-                 Specialization: {{currentDoctor.specilization}}
+                 <span style="color:#2E8B57; font-size: 20px;" > Major: </span> {{currentDoctor[0].major}}
                </p>
                <div class="row">
                  <div class="col-lg-8">
                    <label>Appointments</label>
-                   <select class="selectpicker" ng-model="timeA" ng-change="selectedValue()"><option ng-repeat="app in currentDoctor.availableAppointments">{{app.time}} {{app.date}}</option></select>
-                   <div class="form-group">
+                   <select class="selectpicker" ng-model="timeA" ng-change="selectedValue()"><option ng-repeat="app in currentDoctor[0].open">{{app.time}} {{app.date}}</option></select>
+                   <!-- <div class="form-group">
                      <label for="usr">Name:</label> <input id="pName"
                      type="text" ng-model="nameVal" class=
                      "form-control" required="required"/>
-                   </div>
-                   <div class="form-group">
+                   </div> -->
+                   <!-- <div class="form-group">
                      <label for="pwd">Phone:</label> <input id="pPhon"
                      type="text" class="form-control" ng-model=
                      "phoneVal" required="required"/>
+                   </div> -->
+                   <div class="form-group">
+                     <label for="pwd">Case:</label> <input id='pcase'
+                     type="text" class="form-control" ng-model=
+                     "Caseval" required="required"/>
                    </div>
                    <br />
                    <!-- <span id="doctorName"><font color=

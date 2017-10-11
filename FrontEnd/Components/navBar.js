@@ -1,8 +1,7 @@
 angular.module('app')
 .controller('navBar', ($scope, $http) => {
   $scope.isLoggedIn = false;
-  $scope.showPro = false;
-  $scope.doctor=false
+  $scope.doctor;
 
   $scope.checkIsLoggedIn = function() {
     console.log('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
@@ -18,14 +17,28 @@ angular.module('app')
       method: 'GET',
       async: false,
       success: function (data){
-        $scope.isLoggedIn = (data === 'true') ? true : false;
-        console.log('cccccccccccccccc', $scope.isLoggedIn);
+        if(data=='doctor'){
+            $scope.doctor=true;
+          $scope.isLoggedIn = true;}
+
+        if(data=='patient'){
+            $scope.doctor=false;
+          $scope.isLoggedIn = true;}
       }
     })
   }
 
-  $scope.profile = function (){
-    $scope.showPro = true;
+$scope.logOut = function (){
+  console.log('Signing out')
+  $.ajax({
+    url: '/logOut',
+    method: 'GET',
+    async: false,
+    success: function (){
+      $scope.isLoggedIn = false;
+      $scope.doctor = false
+    }
+  })
 }
 })
 .component('navbar',{

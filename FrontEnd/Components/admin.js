@@ -2,6 +2,7 @@ angular.module('app')
 //we defined this varibals to be global for the others functions 
 .controller('adminCtrl', function($scope, $http) {
    $scope.docInfo = {}
+   $scope.reservedAppointments;
     // $scope.appointmentDate;
     // $scope.appointmentTime;
     // $scope.appointments;
@@ -31,24 +32,24 @@ $scope.addApointment = function() {
             })
         };
 // it will print the reserved appointments from the database
-// $scope.loadAppointments = function() {
-//     console.log('loadAppointments run');
-//     $.ajax({
-//         url: '/getDoctorReservedAppointments',
-//         method: 'GET',
-//         dataType: 'json',
-//         async: false,
-//         success: function(data) {
-//            console.log('++++++++++++++', data);
-//            $scope.appointments = data.reservedAppointments;
-//        }
-//    })
-// }
+$scope.loadAppointments = function() {
+    console.log('loadAppointments run');
+    $.ajax({
+        url: '/getDoctorReservedAppointments',
+        method: 'GET',
+        dataType: 'json',
+        async: false,
+        success: function(data) {
+           console.log('++++++++++++++', data);
+           $scope.reservedAppointments = data;
+       }
+   })
+}
 
 $scope.getDocInfo = function(){
     console.log("getting doctor")
     $.ajax({
-        url: '/getDocInfo',
+        url: '/docInfo',
         method: 'GET',
         dataType: 'json',
         async: false,
@@ -57,6 +58,26 @@ $scope.getDocInfo = function(){
            $scope.docInfo = data[0]
        }
    })
+}
+$scope.init = function(){
+    $scope.getDocInfo()
+    $scope.loadAppointments()
+}
+
+$scope.recommendation = function(appointment){
+    var letter = $("#recommendation").val()
+    $.ajax({
+        url: '/recomendation',
+        method: 'POST',
+        dataType: 'json',
+        data: {
+            recomendation: letter,
+            appointment: appointment
+        },
+        success: () => {
+            console.log('sent')
+        }
+    })
 }
 
 $scope.deleteAppointment = (appointment) => {
