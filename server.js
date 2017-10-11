@@ -192,7 +192,7 @@ app.get('/getDoctorReservedAppointments', (req, res) => {
     }, (error, info) => {
         if (error || !info.length) {
             res.send([]);
-            return console.log('err : ' , err , 'info : ', info );
+            return console.log('err : ' , error , 'info : ', info );
         }
         //info is array of objects , each object is an appointment
         //{id , doctor , patient , time , recomendations , case}
@@ -235,7 +235,7 @@ app.post('/login', function (req, res) {
             // Create session
             req.session.username = doctor[0].name;
             req.session.password = doctor[0].password;
-            console.log('--------doctor-------',doctor[0])
+            console.log('--------doctor-------',doctor[0].name)
             console.log('--------req.session-------',req.session)
             return res.redirect('/FrontEnd/index.html');
         }
@@ -300,6 +300,7 @@ app.post('/signup', upload.any(), function(req, res) {
                 password: req.body.password,
                 phone: req.body.phoneNumber,
                 major: req.body.specilization,
+                location: [req.body.lat , req.body.lng],
                 image: req.body.image
             };
             console.log('req.body : ', req.body)
