@@ -11,6 +11,12 @@
 		 	search for hospitals 
 		</button>
 	</center>
+	<center style=" width: 100%;  position: absolute; top: 20px"  id="sb">
+		<button ng-if='flag' class="alert alert-success"  style="margin-top: 50px;" ng-click='doctorss()'> 
+		 	<span class="fa fa-search" aria-hidden="true"></span>
+		 	search for doctors 
+		</button>
+	</center>
 </span>
 
 	<div class="containerM containerMB" >
@@ -22,7 +28,17 @@
 
 
 <div class="containerM" style="float: left;">
-	
+	<div ng-if='doctors.length > 0' style="margin-top: 250px;">
+		<div class="media well well-fuild col-lg-6 col-lg-offset-3 col-md-6 col-sm-12" ng-repeat="doctor in doctors" style="width: 100%; ">
+			<h1>{{doctor.name}}</h1>
+			<p>{{doctor.distance}}</p>
+			<small>
+			   <a
+               ng-href='https://maps.google.com/maps?q={{doctor.location[0]}},{{doctor.location[1]}}&hl=es;z=14&amp;output=embed' style="color:#0000FF; text-align:left" target="_blank">open doctor location
+               </a>
+            </small>
+		</div>
+	</div>
 
 	<div ng-if='render' style="margin-top: 250px;">
 		<div class="media well well-fuild col-lg-6 col-lg-offset-3 col-md-6 col-sm-12" ng-repeat="hospital in hospitals" style="width: 100%; ">
