@@ -25,11 +25,14 @@ div {
 
       //styling ....
       $('.containerM').css({
-        'width' : '40%'
+        'width' : '30%'
       });
       $("#fb").animate({width: "-=60%"} ,1300);
       $("#sb").animate({width: "-=60%"} ,1300, () => {
         $("#sb").animate({top : "+=20%"});
+      });
+      $("#tb").animate({width: "-=60%"} ,1300, () => {
+        $("#tb").animate({top : "+=10%"});
       });
       // $("#sb").css({marginRight: "350px"});
       
@@ -130,6 +133,7 @@ div {
                       var dist=getDistanceFromLatLonInKm($scope.position.lat,$scope.position.lng,$scope.doctors[i].location[0],$scope.doctors[i].location[1]);
                       $scope.doctors[i].distance=dist
                    }
+                   console.log(doctors)
 
                 }
                 ,error:function(){
