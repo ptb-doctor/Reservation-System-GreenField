@@ -22,6 +22,7 @@ div {
     console.log('kokokokokokookoko')
     var map, infoWindow;
     $scope.initMap=function() {
+
       //styling ....
       $('.containerM').css({
         'width' : '40%'
@@ -46,6 +47,7 @@ div {
         zoom: 11
       });
       infoWindow = new google.maps.InfoWindow;
+
 
       // Try HTML5 geolocation.
       if (navigator.geolocation) {
