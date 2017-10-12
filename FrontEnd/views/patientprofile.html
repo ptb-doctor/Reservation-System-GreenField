@@ -37,8 +37,10 @@
                 <li>
                     <h4><b>Time:</b> {{appointment.time}}</h4>
                     <h4><b>Case:</b> {{appointment.case}}</h4>
+                    <h4><b>Doctor's name: </b> {{appointment.doctor}}</h4>
+                    <h4><b>Doctor's recom.: </b> {{appointment.recomendations}}</h4>
                 </li>
-                <button ng-click="deleteOpenAppointment(appointment)" class="btn btn-danger">Delete</button>
+                <button ng-click="deleteAppointment(appointment)" class="btn btn-danger">Delete</button>
               </div>
               </div>
        </ul>
