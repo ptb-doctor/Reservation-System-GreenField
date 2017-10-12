@@ -23,7 +23,7 @@ div {
     $('.containerM').css({
       'width' : '40%'
     });
-    $(".btn.btn-warning.btn-md").animate({marginLeft: "+=60%"} ,1000, swing);
+    $(".btn.btn-warning.btn-md").animate({marginLeft: "+=60%"});
     $('.containerMB').css({
         'float' : 'right'
     });
