@@ -97,6 +97,44 @@ div {
         }
     });
   }
+  function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1); 
+    var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; // Distance in km
+    return d;
+}
+
+  function deg2rad(deg) {
+      return deg * (Math.PI/180)
+  }
+  $scope.doctors;
+  $scope.doctorss=function(){
+    $scope.render=false;
+      $.ajax({
+                url:'/getDoctors',
+                dataType: 'json',
+                async: false,
+                success: function(data) {
+                   console.log('hwwwwwww')
+                   console.log(data)
+                   $scope.doctors=data
+                   for(var i=0;i<$scope.doctors.length;i++){
+                      var dist=getDistanceFromLatLonInKm($scope.position.lat,$scope.position.lng,$scope.doctors[i].location[0],$scope.doctors[i].location[1]);
+                      $scope.doctors[i].distance=dist
+                   }
+
+                }
+                ,error:function(){
+                    console.log('errrrrrrrror')
+                }
+            });
+  }
 })
 .component('googlemap',{
 	controller:"googlemap",
