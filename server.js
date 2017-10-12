@@ -582,7 +582,7 @@ app.post('/googlemap',({body},res)=>{
             res.send(data);
         })
     }
-    radius(1000);
+    radius(500);
 
 })
 
